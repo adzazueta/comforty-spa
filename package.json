@@ -1,0 +1,17 @@
+{
+  "name": "comforty-spa",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite build && firebase serve",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "firebase": "^10.12.5"
+  },
+  "devDependencies": {
+    "vite": "^5.3.4"
+  }
+}
