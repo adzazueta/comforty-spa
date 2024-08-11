@@ -1,3 +1,3 @@
-# Elixir Emporium SPA
+# Comforty SPA
 
-An SPA built in pure HTML, CSS and JavaScript using firebase as backend.
+A pure HTML, CSS, JavaScript furniture e-commerce SPA built with Web Components and Firebase for backend.
