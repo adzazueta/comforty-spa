@@ -7,7 +7,13 @@
 
   --text-color-light: #ffffff;
   --text-color-dark: #272343;
+  --input-text-color: #9a9caa;
 
   --content-wrapper-width: 1320px;
   --icon-button-size: 44px;
+  --button-border-radius: 8px;
+  --button-border: 1px solid transparent;
+  
+  --input-border-radius: 8px;
+  --input-border: 1px solid #e1e3e5;
 }

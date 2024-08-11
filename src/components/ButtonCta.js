@@ -4,7 +4,6 @@ export default class ButtonCta extends HTMLElement {
     this.attachShadow({ mode: 'open' })
 
     this.props = {
-      text: '',
       showArrow: false
     }
 
@@ -12,8 +11,9 @@ export default class ButtonCta extends HTMLElement {
   }
 
   connectedCallback() {
-    this.props.text = this.getAttribute('data-text') ?? ''
-    this.props.showArrow = this.getAttribute('data-show-arrow') ?? false
+    this.props.showArrow = this.hasAttribute('data-show-arrow') ?? false
+
+    console.log(this.props)
 
     if (this.props.showArrow) {
       this.arrowIcon = document.createElement('span')
@@ -30,13 +30,30 @@ export default class ButtonCta extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>${css}</style>
       <button class="btn-cta" type="button">
-        ${this.props.text}
+        <slot></slot>
         ${this.arrowIcon ? this.arrowIcon.outerHTML : ''}
       </button>
     `
   }
 }
 
-const css = ``
+const css = `
+  .btn-cta {
+    padding: 14px 24px;
+    background-color: var(--primary-color);
+    border-radius: var(--button-border-radius);
+    border: var(--button-border);
+    color: var(--text-color-light);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: var(--bg-color);
+      color: var(--text-color-dark);
+    }
+  }
+`
 
 customElements.define('button-cta', ButtonCta)

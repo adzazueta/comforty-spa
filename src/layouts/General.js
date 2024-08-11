@@ -8,6 +8,8 @@ import '../components/PageLogo.js'
 import '../components/ButtonIcon.js'
 import '../components/HomeNavbar.js'
 import '../components/SocialMediaLink.js'
+import '../components/ButtonCta.js'
+import '../components/CustomInput.js'
 
 export default class GeneralLayout extends HTMLElement {
   constructor() {
@@ -91,6 +93,12 @@ export default class GeneralLayout extends HTMLElement {
           </div>
           <div class="col">
             <p class="footer-col-title">Newsletter</p>
+            <div class="newsletter-input">
+              <custom-input data-type="email" data-name="newsletter-email" data-label="Your email"></custom-input>
+              <button-cta data-show-arrow>
+                Subscribe
+              </button-cta>
+            </div>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tincidunt erat enim.</p>
           </div>
         </div>
@@ -186,6 +194,12 @@ const css = `
 
   .footer-links a:hover {
     color: var(--primary-color);
+  }
+
+  .newsletter-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 `
 
