@@ -27,13 +27,13 @@ const css = `
     align-items: center;
     gap: 8px;
     text-decoration: none;
-  }
 
-  .page-logo p {
-    font-size: 24px;
-    color: #272343;
-    font-weight: 600;
-    margin: 0;
+    & p {
+      font-size: 24px;
+      color: #272343;
+      font-weight: 600;
+      margin: 0;
+    }
   }
 `
 

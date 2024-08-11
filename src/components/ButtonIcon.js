@@ -50,6 +50,7 @@ export default class ButtonIcon extends HTMLElement {
 
 const css = `
   .btn {
+    cursor: pointer;
     background-color: var(--bg-button);
     min-width: var(--icon-button-size);
     height: var(--icon-button-size);
@@ -62,29 +63,29 @@ const css = `
     padding: 0 11px;
     font-size: 12px;
     transition: all 0.3s ease;
-  }
 
-  .btn .badge {
-    background-color: var(--primary-color);
-    border-radius: 100%;
-    color: var(--text-color-light);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
-    transition: all 0.3s ease;
-  }
+    &:hover {
+      background-color: var(--primary-color);
+      color: var(--text-color-light);
 
-  .btn:hover {
-    background-color: var(--primary-color);
-    color: var(--text-color-light);
-  }
+      & .badge {
+        background-color: var(--text-color-light);
+        color: var(--primary-color);
+      }
+    }
 
-  .btn:hover .badge {
-    background-color: var(--text-color-light);
-    color: var(--primary-color);
+    & .badge {
+      background-color: var(--primary-color);
+      border-radius: 100%;
+      color: var(--text-color-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      transition: all 0.3s ease;
+    }
   }
 `
 

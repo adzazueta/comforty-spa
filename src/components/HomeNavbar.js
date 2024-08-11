@@ -26,17 +26,17 @@ const css = `
   nav {
     display: flex;
     gap: 32px;
-  }
 
-  nav a {
-    text-decoration: none;
-    color: var(--text-color-dark);
-    font-size: 14px;
-    transition: all 0.3s ease;
-  }
+    & a {
+      text-decoration: none;
+      color: var(--text-color-dark);
+      font-size: 14px;
+      transition: all 0.3s ease;
 
-  nav a:hover {
-    color: var(--primary-color);
+      &:hover {
+        color: var(--primary-color);
+      }
+    }
   }
 `
 

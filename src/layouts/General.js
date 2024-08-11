@@ -2,6 +2,10 @@
 import '../components/icons/UserIcon.js'
 import '../components/icons/CartIcon.js'
 import '../components/icons/FacebookIcon.js'
+import '../components/icons/TwitterIcon.js'
+import '../components/icons/InstagramIcon.js'
+import '../components/icons/PinterestIcon.js'
+import '../components/icons/YoutubeIcon.js'
 
 // Components
 import '../components/PageLogo.js'
@@ -10,6 +14,7 @@ import '../components/HomeNavbar.js'
 import '../components/SocialMediaLink.js'
 import '../components/ButtonCta.js'
 import '../components/CustomInput.js'
+import '../components/NewsletterForm.js'
 
 export default class GeneralLayout extends HTMLElement {
   constructor() {
@@ -54,20 +59,17 @@ export default class GeneralLayout extends HTMLElement {
               <social-media-link data-href="https://facebook.com">
                 <facebook-icon slot="icon"></facebook-icon>
               </social-media-link>
-              <social-media-link data-href="https://facebook.com">
-                <facebook-icon slot="icon"></facebook-icon>
+              <social-media-link data-href="https://x.com">
+                <twitter-icon slot="icon"></twitter-icon>
               </social-media-link>
-              <social-media-link data-href="https://facebook.com">
-                <facebook-icon slot="icon"></facebook-icon>
+              <social-media-link data-href="https://instagram.com">
+                <instagram-icon slot="icon"></instagram-icon>
               </social-media-link>
-              <social-media-link data-href="https://facebook.com">
-                <facebook-icon slot="icon"></facebook-icon>
+              <social-media-link data-href="https://pinterest.com">
+                <pinterest-icon slot="icon"></-icon>
               </social-media-link>
-              <social-media-link data-href="https://facebook.com">
-                <facebook-icon slot="icon"></facebook-icon>
-              </social-media-link>
-              <social-media-link data-href="https://facebook.com">
-                <facebook-icon slot="icon"></facebook-icon>
+              <social-media-link data-href="https://youtube.com">
+                <youtube-icon slot="icon"></youtube-icon>
               </social-media-link>
             </div>
           </div>
@@ -92,13 +94,7 @@ export default class GeneralLayout extends HTMLElement {
             </div>
           </div>
           <div class="col">
-            <p class="footer-col-title">Newsletter</p>
-            <div class="newsletter-input">
-              <custom-input data-type="email" data-name="newsletter-email" data-label="Your email"></custom-input>
-              <button-cta data-show-arrow>
-                Subscribe
-              </button-cta>
-            </div>
+            <newsletter-form></newsletter-form>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tincidunt erat enim.</p>
           </div>
         </div>
@@ -110,96 +106,96 @@ export default class GeneralLayout extends HTMLElement {
 const css = `
   :host {
     margin: 0 auto;
-  }
 
-  header, footer {
-    background-color: var(--bg-accent);
-  }
+    & header {
+      background-color: var(--bg-accent);
 
-  nav {
-    background-color: var(--bg-color);
-  }
+      & .wrapper {
+        justify-content: space-between;
+      }
+    }
+    
+    & .nav {
+      background-color: var(--bg-color);
+    }
 
-  .wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 auto;
-    max-width: var(--content-wrapper-width);
-    padding: 16px 32px;
-  }
+    & .wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0 auto;
+      max-width: var(--content-wrapper-width);
+      padding: 16px 32px;
 
-  header > .wrapper {
-    justify-content: space-between;
-  }
-  
-  .wrapper .user-links {
-    display: flex;
-    gap: 12px;
-  }
+      & .user-links {
+        display: flex;
+        gap: 12px;
+      }
+    }
 
-  footer .wrapper {
-    gap: 32px;
-  }
+    & footer {
+      background-color: var(--bg-accent);
 
-  .nav {
-    background-color: var(--bg-color);
-  }
+      & .wrapper {
+        gap: 32px;
 
-  .col {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    flex-basis: min-content;
-    flex-grow: 1;
-    padding: 32px 0;
-    gap: 24px;
-  }
+        & .col {
+          display: flex;
+          flex-direction: column;
+          justify-content: start;
+          flex-basis: fit-content;
+          flex-grow: 1;
+          padding: 32px 0;
+          gap: 24px;
+          
+          & p {
+            color: var(--text-color-dark);
+            font-size: 16px;
+            margin: 0;
+            opacity: 0.6;
+          }
+          
+          &:first-of-type {
+            justify-content: center;
+          }
 
-  footer .col:first-of-type {
-    justify-content: center;
-  }
+          &:first-of-type,
+          &:last-of-type {
+            flex-basis: 25%;
+          }
+        }
+      }
+      
+      & .social-media-container {
+        display: flex;
+        gap: 16px;
+      }
 
-  .col p {
-    color: var(--text-color-dark);
-    font-size: 16px;
-    margin: 0;
-    opacity: 0.6;
-  }
+      & .footer-col-title {
+        font-size: 14px;
+        letter-spacing: 2px;
+        color: var(--text-color-dark);
+        opacity: 0.6;
+        text-transform: uppercase;
+      }
 
-  .social-media-container {
-    display: flex;
-    gap: 8px;
-  }
+      & .footer-links {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
 
-  .footer-col-title {
-    font-size: 14px;
-    letter-spacing: 2px;
-    color: var(--text-color-dark);
-    opacity: 0.6;
-    text-transform: uppercase;
-  }
+        & a {
+          font-size: 16px;
+          color: var(--text-color-dark);
+          text-decoration: none;
+          transition: all 0.3s ease;
+          width: fit-content;
 
-  .footer-links {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .footer-links a {
-    font-size: 16px;
-    color: var(--text-color-dark);
-    text-decoration: none;
-    transition: all 0.3s ease;
-  }
-
-  .footer-links a:hover {
-    color: var(--primary-color);
-  }
-
-  .newsletter-input {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+          &:hover {
+            color: var(--primary-color);
+          }
+        }
+      }
+    }
   }
 `
 

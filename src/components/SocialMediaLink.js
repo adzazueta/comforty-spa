@@ -33,11 +33,11 @@ const css = `
     color: var(--text-color-dark);
     opacity: 0.6;
     transition: all 0.3s ease;
-  }
 
-  .social-media-link:hover {
-    color: var(--primary-color);
-    opacity: 1;
+    &:hover {
+      color: var(--primary-color);
+      opacity: 1;
+    }
   }
 `
 
