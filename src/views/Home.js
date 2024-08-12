@@ -2,7 +2,6 @@
 import '../layouts/General.js'
 
 // Components
-import '../components/LoginForm.js'
 
 export default class Home {
   constructor() {}

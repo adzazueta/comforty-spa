@@ -12,7 +12,6 @@ export default class User {
 
   static async signIn(email, password) {
     try {
-      console.log({ auth: getAuth(), email, password })
       const userCredentials = await signInWithEmailAndPassword(getAuth(), email, password)
       return userCredentials
     } catch (error) {

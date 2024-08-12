@@ -54,6 +54,7 @@ const css = `
   .btn-cta {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 4px;
     padding: var(--padding-y, 14px) 24px;
     background-color: var(--primary-color);
@@ -63,11 +64,13 @@ const css = `
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
+    width: 100%;
     transition: all 0.3s ease;
 
     &:hover {
       background-color: var(--bg-color);
       color: var(--text-color-dark);
+      border: var(--input-border);
     }
 
     & .arrow-icon {

@@ -1,11 +1,20 @@
+// Layout
+import '../layouts/General.js'
+
 // Components
 import '../components/LoginForm.js'
 
 export default class Login {
+  constructor() {}
+
   async getHTML() {
     return `
-      <h1>Login</h1>
-      <login-form></login-form>
+      <style>${css}</style>
+      <general-layout>
+        <login-form></login-form>
+      </general-layout>
     `
   }
 }
+
+const css = ``

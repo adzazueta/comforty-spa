@@ -16,4 +16,7 @@
   
   --input-border-radius: 8px;
   --input-border: 1px solid #e1e3e5;
+
+  --card-border-radius: 12px;
+  --card-box-shadow: 0 0 30px rgb(39 35 67 / 12%);
 }
