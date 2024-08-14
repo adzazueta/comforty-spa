@@ -1,8 +1,15 @@
-export default class NotFound {
-  constructor() {}
+export default class NotFound extends HTMLElement {
+  constructor() {
+    super()
+    this.attachShadow({ mode: 'open' })
+  }
 
-  async getHTML() {
-    return `
+  connectedCallback() {
+    this.render()
+  }
+
+  render() {
+    this.shadowRoot.innerHTML = `
       <style>${css}</style>
       <h1>404 - NotFound</h1>
     `
@@ -10,3 +17,5 @@ export default class NotFound {
 }
 
 const css = ``
+
+customElements.define('not-found', NotFound)

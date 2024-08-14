@@ -12,8 +12,6 @@ import '../components/PageLogo.js'
 import '../components/ButtonIcon.js'
 import '../components/HomeNavbar.js'
 import '../components/SocialMediaLink.js'
-import '../components/ButtonCta.js'
-import '../components/CustomInput.js'
 import '../components/NewsletterForm.js'
 
 export default class GeneralLayout extends HTMLElement {
@@ -33,7 +31,7 @@ export default class GeneralLayout extends HTMLElement {
         <div class="wrapper">
           <page-logo></page-logo>
           <div class="user-links">
-            <button-icon data-text="Cart" data-badge="0">
+            <button-icon id="cart" data-text="Cart" data-badge="0">
               <cart-icon slot="icon"></cart-icon>
             </button-icon>
             <button-icon>
@@ -130,6 +128,14 @@ const css = `
         display: flex;
         gap: 12px;
       }
+    }
+
+    & main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100% - 477px);
+      width: 100vw;
     }
 
     & footer {

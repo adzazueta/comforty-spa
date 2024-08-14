@@ -1,10 +1,11 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth'
 
 export default class User {
-  static async signUp(email, password) {
+  static async signUp(name, email, password) {
     try {
       const userCredentials = await createUserWithEmailAndPassword(getAuth(), email, password)
-      return userCredentials
+      await updateProfile(userCredentials.user, { displayName: name })
+      return getAuth().currentUser
     } catch (error) {
       throw new Error(error)
     }
@@ -12,7 +13,6 @@ export default class User {
 
   static async signIn(email, password) {
     try {
-      console.log({ auth: getAuth(), email, password })
       const userCredentials = await signInWithEmailAndPassword(getAuth(), email, password)
       return userCredentials
     } catch (error) {
@@ -27,5 +27,13 @@ export default class User {
     } catch (error) {
       throw new Error(error)
     }
+  }
+
+  static verifyToken() {
+    const currentUser = getAuth().currentUser
+    if (!currentUser) return false
+
+    const accessToken = sessionStorage.getItem('access-token')
+    return accessToken === currentUser.accessToken
   }
 }

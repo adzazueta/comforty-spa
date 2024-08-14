@@ -61,6 +61,7 @@ const css = `
       display: flex;
       flex-grow: 1;
       max-width: var(--custom-input-width, 285px);
+      width: 100%;
     }
 
     & .custom-label {

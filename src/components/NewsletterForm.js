@@ -1,3 +1,7 @@
+// Components
+import '../components/ButtonCta.js'
+import '../components/CustomInput.js'
+
 export default class NewsletterForm extends HTMLElement {
   constructor() {
     super()
@@ -34,13 +38,13 @@ export default class NewsletterForm extends HTMLElement {
       </form>
     `
 
-    const submitButtom = this.shadowRoot.querySelector('button-cta')
-    const emailInput = this.shadowRoot.querySelector('[name="newsletter-email"]')
     const newsletterForm = this.shadowRoot.querySelector('#newsletter-form')
+    const emailInput = this.shadowRoot.querySelector('[name="newsletter-email"]')
+    const submitButtom = this.shadowRoot.querySelector('button-cta')
 
-    submitButtom.addEventListener('click', this._handleSubmitFromInputs)
-    emailInput.addEventListener('inputenter', this._handleSubmitFromInputs)
     newsletterForm.addEventListener('submit', this._handleNewsletterSubmit)
+    emailInput.addEventListener('inputenter', this._handleSubmitFromInputs)
+    submitButtom.addEventListener('click', this._handleSubmitFromInputs)
   }
 }
 
