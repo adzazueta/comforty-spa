@@ -1,17 +1,26 @@
+// Services
+import User from '../services/User.js'
+
 // Import routes
 import Routes from './routes.js'
 
-// Import views
-import NotFound from '../views/NotFound.js'
-
 async function router() {
-  const routeMatch = Routes.find((route) => route.path === location.pathname) ?? { view: NotFound }
-  const view = new routeMatch.view()
+  const routeMatch = Routes.find((route) => route.path === location.pathname)
 
-  document.querySelector('#app').innerHTML = await view.getHTML()
+  if (!routeMatch) {
+    navigateTo('/404')
+    return
+  }
+
+  if (routeMatch?.protected && !User.verifyToken()) {
+    navigateTo('/login')
+    return
+  }
+
+  document.querySelector('#app').innerHTML = routeMatch.view
 }
 
-function navigateTo(path) {
+export function navigateTo(path) {
   history.pushState(null, null, path)
   router()
 }

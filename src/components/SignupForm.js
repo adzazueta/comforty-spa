@@ -8,22 +8,22 @@ import User from "../services/User.js"
 import '../components/ButtonCta.js'
 import '../components/CustomInput.js'
 
-export default class LoginForm extends HTMLElement {
+export default class SignupForm extends HTMLElement {
   static css = ``
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
 
-    this._handleLoginSubmit = this._handleLoginSubmit.bind(this)
+    this._handleSignupSubmit = this._handleSignupSubmit.bind(this)
     this._handleSubmitFromInputs = this._handleSubmitFromInputs.bind(this)
   }
 
-  async _handleLoginSubmit(event) {
+  async _handleSignupSubmit(event) {
     event.preventDefault()
     try {
       const formData = new FormData(event.target)
-      const currentUser = await User.signIn(formData.get('email'), formData.get('password'))
-      sessionStorage.setItem('access-token', currentUser.user.accessToken)
+      const currentUser = await User.signUp(formData.get('name'), formData.get('email'), formData.get('password'))
+      sessionStorage.setItem('access-token', currentUser.accessToken)
       navigateTo('/admin')
     } catch (error) {
       console.error(error)
@@ -31,7 +31,7 @@ export default class LoginForm extends HTMLElement {
   }
 
   _handleSubmitFromInputs() {
-    this.shadowRoot.querySelector('#login-form').requestSubmit()
+    this.shadowRoot.querySelector('#signup-form').requestSubmit()
   }
 
   connectedCallback() {
@@ -42,24 +42,25 @@ export default class LoginForm extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>${css}</style>
       <div class="card">
-        <h1 class="title">Login</h1>
-        <form id="login-form">
+        <h1 class="title">Sign Up</h1>
+        <form id="signup-form">
+          <custom-input style="--custom-input-width: 100%;" name="name" data-type="text" data-label="Name" data-max-width="100%"></custom-input>
           <custom-input style="--custom-input-width: 100%;" name="email" data-type="email" data-label="Email" data-max-width="100%"></custom-input>
           <custom-input style="--custom-input-width: 100%;" name="password" data-type="password" data-label="Password" data-max-width="100%"></custom-input>
           <button-cta data-type="submit" data-show-arrow>
-            Login
+            Sign Up
           </button-cta>
           <slot name="extra-options"></slot>
         </form>
       </div>
     `
 
-    const newsletterForm = this.shadowRoot.querySelector('#login-form')
+    const newsletterForm = this.shadowRoot.querySelector('#signup-form')
     const emailInput = this.shadowRoot.querySelector('[name="email"]')
     const passwordInput = this.shadowRoot.querySelector('[name="password"]')
     const submitButtom = this.shadowRoot.querySelector('button-cta')
 
-    newsletterForm.addEventListener('submit', this._handleLoginSubmit)
+    newsletterForm.addEventListener('submit', this._handleSignupSubmit)
     emailInput.addEventListener('inputenter', this._handleSubmitFromInputs)
     passwordInput.addEventListener('inputenter', this._handleSubmitFromInputs)
     submitButtom.addEventListener('click', this._handleSubmitFromInputs)
@@ -90,7 +91,7 @@ const css = `
       text-align: center;
     }
 
-    & #login-form {
+    & #signup-form {
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -99,4 +100,4 @@ const css = `
   }
 `
 
-customElements.define('login-form', LoginForm)
+customElements.define('signup-form', SignupForm)

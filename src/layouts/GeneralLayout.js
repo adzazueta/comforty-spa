@@ -31,7 +31,7 @@ export default class GeneralLayout extends HTMLElement {
         <div class="wrapper">
           <page-logo></page-logo>
           <div class="user-links">
-            <button-icon data-text="Cart" data-badge="0">
+            <button-icon id="cart" data-text="Cart" data-badge="0">
               <cart-icon slot="icon"></cart-icon>
             </button-icon>
             <button-icon>
@@ -134,7 +134,7 @@ const css = `
       display: flex;
       align-items: center;
       justify-content: center;
-      height: calc(100% - 477px);
+      min-height: calc(100% - 477px);
       width: 100vw;
     }
 
