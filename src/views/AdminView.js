@@ -1,9 +1,9 @@
 // Layout
-import '../layouts/GeneralLayout.js'
+import '../layouts/AdminLayout.js'
 
 // Components
 
-export default class HomeView extends HTMLElement {
+export default class AdminView extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
@@ -16,13 +16,13 @@ export default class HomeView extends HTMLElement {
   render() {
     this.shadowRoot.innerHTML = `
       <style>${css}</style>
-      <general-layout>
-        <h1>HomePage</h1>
-      </general-layout>
+      <admin-layout>
+        <h1>Admin View</h1>
+      </admin-layout>
     `
   }
 }
 
 const css = ``
 
-customElements.define('home-view', HomeView)
+customElements.define('admin-view', AdminView)
