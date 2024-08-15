@@ -3,6 +3,11 @@ export default class ButtonLink extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
 
+    this.props = {
+      isAdminNavItem: false,
+      isActive: false
+    }
+
     this._handleButtonClick = this._handleButtonClick.bind(this)
   }
 
@@ -10,14 +15,29 @@ export default class ButtonLink extends HTMLElement {
     this.dispatchEvent(new Event('click'))
   }
 
+  _renderAdminNavClasses() {
+    let classes = ''
+
+    if (this.props.isAdminNavItem) classes += 'admin-nav '
+    if (this.props.isActive) classes += 'active'
+
+    return classes
+  }
+
   connectedCallback() {
+    this.props.isAdminNavItem = this.hasAttribute('data-admin-nav')
+    this.props.isActive = this.hasAttribute('data-active')
+
     this.render()
   }
 
   render() {
     this.shadowRoot.innerHTML = `
       <style>${css}</style>
-      <button class="button-link">
+      <button
+        class="button-link ${this._renderAdminNavClasses()}"
+        type="button"
+      >
         <slot></slot>
       </button>
     `
@@ -30,6 +50,7 @@ export default class ButtonLink extends HTMLElement {
 const css = `
   :host {
     margin-bottom: 1px;
+    width: var(--button-link-width, unset);
 
     & .button-link {
       background: transparent;
@@ -40,6 +61,19 @@ const css = `
       font-weight: 500;
       padding: 0;
       transition: all 0.3s ease;
+
+      &.admin-nav {
+        font-size: 16px;
+        padding: 16px 24px;
+        background-color: var(--bg-accent);
+        width: 100%;
+
+        &:hover, &.active {
+          font-weigth: 500;
+          background-color: var(--primary-color);
+          color: var(--text-color-light);
+        }
+      }
   
       &:hover {
         color: var(--text-color-dark);

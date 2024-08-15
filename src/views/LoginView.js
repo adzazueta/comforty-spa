@@ -1,5 +1,5 @@
 // Layout
-import '../layouts/General.js'
+import '../layouts/GeneralLayout.js'
 
 // Components
 import '../components/LoginForm.js'

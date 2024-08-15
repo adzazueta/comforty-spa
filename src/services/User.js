@@ -23,7 +23,6 @@ export default class User {
   static async signOut() {
     try {
       await signOut(getAuth())
-      return userCredentials
     } catch (error) {
       throw new Error(error)
     }
@@ -35,5 +34,9 @@ export default class User {
 
     const accessToken = sessionStorage.getItem('access-token')
     return accessToken === currentUser.accessToken
+  }
+
+  static getUserData() {
+    return getAuth().currentUser
   }
 }
