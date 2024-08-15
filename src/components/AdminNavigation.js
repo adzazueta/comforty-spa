@@ -13,8 +13,10 @@ export default class AdminNavigation extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
 
+    const activeView = location.pathname.replace('/admin', '') || '/products'
+
     this.state = {
-      activeLink: 'products'
+      activeLink: activeView.replace('/', '')
     }
 
     this.buttonLinks = []
@@ -25,17 +27,21 @@ export default class AdminNavigation extends HTMLElement {
 
   _handleButtonLinkClick(event) {
     this.state.activeLink = event.target.id
+
     this.buttonLinks.forEach((btnLink) => {
       btnLink.removeEventListener('click', this._handleButtonLinkClick)
     })
-    this.dispatchEvent(new CustomEvent('changepage', event.target.id))
+
+    this.dispatchEvent(new CustomEvent('changepage', {
+      detail: { pageToRender: event.target.id }
+    }))
+
     this.render()
   }
 
   async _handleSignOutClick() {
     try {
       await User.signOut()
-      sessionStorage.removeItem('access-token')
       navigateTo('/')
     } catch(error) {
       console.error(error)
@@ -52,7 +58,7 @@ export default class AdminNavigation extends HTMLElement {
       buttonLink.style.setProperty('--button-link-width', '100%')
       buttonLink.textContent = link.label
       buttonLink.setAttribute('data-admin-nav', '')
-      
+
       if (link.id === this.state.activeLink) {
         buttonLink.setAttribute('data-active', '')
       }

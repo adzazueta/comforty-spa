@@ -135,7 +135,7 @@ const css = `
       align-items: center;
       justify-content: center;
       min-height: calc(100% - 477px);
-      width: 100vw;
+      width: 100%;
     }
 
     & footer {

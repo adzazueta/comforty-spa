@@ -11,13 +11,14 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
-  margin: 0 auto;
+html, body {
+  height: 100%;
+  margin: 0;
 }
 
 #app {
-  margin: 0 auto;
+  margin: 0;
   height: 100vh;
-  width: 100vw;
+  width: 100%;
   isolation: isolate;
 }

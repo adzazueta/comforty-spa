@@ -7,15 +7,23 @@ export default class ButtonIcon extends HTMLElement {
     
     this.props = {
       buttonText: '',
-      buttonBagdeText: ''
+      buttonBagdeText: '',
+      showBorder: false
     }
 
     this.badge = null
+
+    this._handleButtonClick = this._handleButtonClick.bind(this)
+  }
+
+  _handleButtonClick() {
+    this.dispatchEvent(new CustomEvent('internalclick'))
   }
 
   connectedCallback() {
     this.props.buttonText = this.getAttribute('data-text') ?? ''
     this.props.buttonBagdeText = this.getAttribute('data-badge') ?? ''
+    this.props.showBorder = this.hasAttribute('data-show-border')
 
     if (this.props.buttonBagdeText) {
       this.badge = document.createElement('span')
@@ -39,12 +47,15 @@ export default class ButtonIcon extends HTMLElement {
   render() {
     this.shadowRoot.innerHTML = `
       <style>${css}</style>
-      <button class="btn" type="button" title="${this.props.buttonText}">
+      <button class="btn ${this.props.showBorder ? 'show-border' : ''}" type="button" title="${this.props.buttonText}">
         <slot name="icon"></slot>
         ${this.props.buttonText}
         ${this.badge ? this.badge.outerHTML : ''}
       </button>
     `
+
+    const button = this.shadowRoot.querySelector('.btn')
+    button.addEventListener('click', this._handleButtonClick)
   }
 }
 
@@ -64,9 +75,14 @@ const css = `
     font-size: 12px;
     transition: all 0.3s ease;
 
+    &.show-border {
+      border: 1px solid var(--border-color);
+    }
+
     &:hover {
       background-color: var(--primary-color);
       color: var(--text-color-light);
+      border: 1px solid transparent;
 
       & .badge {
         background-color: var(--text-color-light);
