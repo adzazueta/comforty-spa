@@ -1,3 +1,6 @@
+// Router
+import { navigateTo } from '../router/index.js'
+
 // Services
 import User from '../services/User.js'
 
@@ -12,6 +15,12 @@ export default class AdminLayout extends HTMLElement {
     this.state = {
       userName: ''
     }
+
+    this._handleAdminNavChangePage = this._handleAdminNavChangePage.bind(this)
+  }
+
+  _handleAdminNavChangePage(event) {
+    navigateTo(`/admin/${event.detail.pageToRender}`)
   }
 
   connectedCallback() {
@@ -34,6 +43,9 @@ export default class AdminLayout extends HTMLElement {
         </section>
       </main>
     `
+
+    const adminNavigation = this.shadowRoot.querySelector('admin-navigation')
+    adminNavigation.addEventListener('changepage', this._handleAdminNavChangePage)
   }
 }
 

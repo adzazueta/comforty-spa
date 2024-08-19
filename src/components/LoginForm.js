@@ -22,9 +22,8 @@ export default class LoginForm extends HTMLElement {
     event.preventDefault()
     try {
       const formData = new FormData(event.target)
-      const currentUser = await User.signIn(formData.get('email'), formData.get('password'))
-      sessionStorage.setItem('access-token', currentUser.user.accessToken)
-      navigateTo('/admin')
+      await User.signIn(formData.get('email'), formData.get('password'))
+      navigateTo('/admin/products')
     } catch (error) {
       console.error(error)
     }

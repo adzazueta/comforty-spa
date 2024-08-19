@@ -1,6 +1,3 @@
-// Services
-import User from '../services/User.js'
-
 // Import routes
 import Routes from './routes.js'
 
@@ -12,8 +9,20 @@ async function router() {
     return
   }
 
-  if (routeMatch?.protected && !User.verifyToken()) {
+  if (routeMatch.redirectTo) {
+    navigateTo(routeMatch.redirectTo)
+    return
+  }
+
+  const isSessionActive = !!sessionStorage.getItem(`firebase:authUser:${import.meta.env.VITE_FIREBASE_API_KEY}:[DEFAULT]`)
+
+  if (routeMatch?.protected && !isSessionActive) {
     navigateTo('/login')
+    return
+  }
+
+  if (routeMatch.path === '/login' && isSessionActive) {
+    navigateTo('/admin')
     return
   }
 

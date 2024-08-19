@@ -17,6 +17,14 @@ export default class CustomInput extends HTMLElement {
     this._handleInputEvent = this._handleInputEvent.bind(this)
   }
 
+  get value() {
+    return this.shadowRoot.querySelector('.custom-input').value
+  }
+
+  set value(value) {
+    this.shadowRoot.querySelector('.custom-input').value = value
+  }
+
   _handleBeforeInputEvent(event) {
     if (event.inputType === 'insertLineBreak') {
       event.preventDefault()

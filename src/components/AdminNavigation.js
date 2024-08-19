@@ -13,10 +13,13 @@ export default class AdminNavigation extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
 
+    const activeView = location.pathname.replace('/admin', '') || '/products'
+
     this.state = {
-      activeLink: 'products'
+      activeLink: activeView.replace('/', '')
     }
 
+    this.navigator = null
     this.buttonLinks = []
 
     this._handleButtonLinkClick = this._handleButtonLinkClick.bind(this)
@@ -25,17 +28,21 @@ export default class AdminNavigation extends HTMLElement {
 
   _handleButtonLinkClick(event) {
     this.state.activeLink = event.target.id
+
     this.buttonLinks.forEach((btnLink) => {
       btnLink.removeEventListener('click', this._handleButtonLinkClick)
     })
-    this.dispatchEvent(new CustomEvent('changepage', event.target.id))
+
+    this.dispatchEvent(new CustomEvent('changepage', {
+      detail: { pageToRender: event.target.id }
+    }))
+
     this.render()
   }
 
   async _handleSignOutClick() {
     try {
       await User.signOut()
-      sessionStorage.removeItem('access-token')
       navigateTo('/')
     } catch(error) {
       console.error(error)
@@ -44,7 +51,6 @@ export default class AdminNavigation extends HTMLElement {
 
   _renderButtonLinks() {
     const linksToRender = [{ id: 'products', label: 'Products' }, { id: 'categories', label: 'Categories' }]
-    const nav = document.createElement('nav')
 
     linksToRender.forEach((link) => {
       const buttonLink = document.createElement('button-link')
@@ -52,15 +58,13 @@ export default class AdminNavigation extends HTMLElement {
       buttonLink.style.setProperty('--button-link-width', '100%')
       buttonLink.textContent = link.label
       buttonLink.setAttribute('data-admin-nav', '')
-      
+
       if (link.id === this.state.activeLink) {
         buttonLink.setAttribute('data-active', '')
       }
 
-      nav.appendChild(buttonLink)
+      this.navigator.appendChild(buttonLink)
     })
-
-    return nav.outerHTML ?? ''
   }
 
   connectedCallback() {
@@ -71,15 +75,18 @@ export default class AdminNavigation extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>${css}</style>
       <page-logo></page-logo>
-      ${this._renderButtonLinks()}
+      <nav></nav>
       <button-link style="--button-link-width: 100%;" class="sign-out" data-admin-nav>Sign Out</button-link>
     `
 
+    this.navigator = this.shadowRoot.querySelector('nav')
+    this._renderButtonLinks()
+    
     this.buttonLinks = this.shadowRoot.querySelectorAll('nav button-link')
     this.buttonLinks.forEach((btnLink) => {
       btnLink.addEventListener('click', this._handleButtonLinkClick)
     })
-
+    
     const signOutButton = this.shadowRoot.querySelector('.sign-out')
     signOutButton.addEventListener('click', this._handleSignOutClick)
   }

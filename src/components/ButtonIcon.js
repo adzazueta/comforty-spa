@@ -7,23 +7,36 @@ export default class ButtonIcon extends HTMLElement {
     
     this.props = {
       buttonText: '',
-      buttonBagdeText: ''
+      buttonBagdeText: '',
+      showBorder: false
     }
 
+    this.button = null
     this.badge = null
+
+    this._handleButtonClick = this._handleButtonClick.bind(this)
+    this._renderBadge = this._renderBadge.bind(this)
+  }
+
+  _handleButtonClick() {
+    this.dispatchEvent(new CustomEvent('internalclick'))
+  }
+
+  _renderBadge(resetBadge = false) {
+    if (resetBadge) {
+      this.button.removeChild(this.badge)
+    }
+
+    this.badge = document.createElement('span')
+    this.badge.classList.add('badge')
+    this.badge.textContent = this.props.buttonBagdeText
+    this.button.appendChild(this.badge)
   }
 
   connectedCallback() {
     this.props.buttonText = this.getAttribute('data-text') ?? ''
     this.props.buttonBagdeText = this.getAttribute('data-badge') ?? ''
-
-    if (this.props.buttonBagdeText) {
-      this.badge = document.createElement('span')
-      this.badge.classList.add('badge')
-      this.badge.textContent = this.props.buttonBagdeText
-    } else {
-      this.badge = null
-    }
+    this.props.showBorder = this.hasAttribute('data-show-border')
 
     this.render()
   }
@@ -33,18 +46,25 @@ export default class ButtonIcon extends HTMLElement {
 
     if (attributeName === 'data-badge') {
       this.props.buttonBagdeText = newValue
+      this._renderBadge(true)
     }
   }
 
   render() {
     this.shadowRoot.innerHTML = `
       <style>${css}</style>
-      <button class="btn" type="button" title="${this.props.buttonText}">
+      <button class="btn ${this.props.showBorder ? 'show-border' : ''}" type="button" title="${this.props.buttonText}">
         <slot name="icon"></slot>
         ${this.props.buttonText}
-        ${this.badge ? this.badge.outerHTML : ''}
       </button>
     `
+
+    if (this.props.buttonBagdeText) {
+      this._renderBadge()
+    }
+
+    this.button = this.shadowRoot.querySelector('.btn')
+    this.button.addEventListener('click', this._handleButtonClick)
   }
 }
 
@@ -64,9 +84,14 @@ const css = `
     font-size: 12px;
     transition: all 0.3s ease;
 
+    &.show-border {
+      border: 1px solid var(--border-color);
+    }
+
     &:hover {
       background-color: var(--primary-color);
       color: var(--text-color-light);
+      border: 1px solid transparent;
 
       & .badge {
         background-color: var(--text-color-light);
