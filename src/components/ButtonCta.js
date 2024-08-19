@@ -26,14 +26,6 @@ export default class ButtonCta extends HTMLElement {
     this.props.type = this.getAttribute('data-type') ?? 'button'
     this.props.showArrow = this.hasAttribute('data-show-arrow') ?? false
 
-    if (this.props.showArrow) {
-      this.arrowIcon = document.createElement('span')
-      this.arrowIcon.classList.add('arrow-icon')
-      this.arrowIcon.innerHTML = '<arrow-icon></arrow-icon>'
-    } else {
-      this.arrowIcon = null
-    }
-
     this.render()
   }
 
@@ -42,11 +34,20 @@ export default class ButtonCta extends HTMLElement {
       <style>${css}</style>
       <button style="--padding-y: ${this.props.showArrow ? '8px' : '14px'};" class="btn-cta" type="${this.props.type}">
         <slot></slot>
-        ${this.arrowIcon ? this.arrowIcon.outerHTML : ''}
       </button>
     `
 
-    this.shadowRoot.querySelector('button').addEventListener('click', this._handleClick)
+    const button = this.shadowRoot.querySelector('button')
+
+    if (this.props.showArrow) {
+      const icon = document.createElement('arrow-icon')
+      this.arrowIcon = document.createElement('span')
+      this.arrowIcon.classList.add('arrow-icon')
+      this.arrowIcon.appendChild(icon)
+      button.appendChild(this.arrowIcon)
+    }
+
+    button.addEventListener('click', this._handleClick)
   }
 }
 

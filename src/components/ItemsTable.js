@@ -22,6 +22,8 @@ export default class ItemsTable extends HTMLElement {
       itemsToShow: []
     }
 
+    this.table = document.createElement('table')
+
     this._handleFilterInput = this._handleFilterInput.bind(this)
     this._handleAddItemClick = this._handleAddItemClick.bind(this)
     this._handleEditButtonClick = this._handleEditButtonClick.bind(this)
@@ -30,12 +32,15 @@ export default class ItemsTable extends HTMLElement {
 
   _handleFilterInput(event) {
     if (event.target.value) {
-      this.state.itemsToShow = this.props.items.filter((items) => items.name === event.target.value)
+      this.state.itemsToShow = this.props.items.filter((items) => {
+        return items.name.toLowerCase().includes(event.target.value.toLowerCase()) ||
+          items.description.toLowerCase().includes(event.target.value.toLowerCase())
+      })
     } else {
       this.state.itemsToShow = this.props.items
     }
 
-    this.render()
+    this._renderTable(true)
   }
 
   _handleAddItemClick() {
@@ -60,10 +65,14 @@ export default class ItemsTable extends HTMLElement {
     }))
   }
 
-  _renderTable() {
-    const table = document.createElement('table')
-    table.id = this.props.itemName.toLowerCase()
+  _renderTable(removeTable = false) {
+    if (removeTable) {
+      this.shadowRoot.removeChild(this.table)
+      const noDataLegend = this.shadowRoot.querySelector('.no-data')
+      if (noDataLegend) this.shadowRoot.removeChild(noDataLegend)
+    } 
 
+    this.table.innerHTML = ''
     const tr = document.createElement('tr')
 
     this.props.headers.forEach((header) =>  {
@@ -76,10 +85,10 @@ export default class ItemsTable extends HTMLElement {
     actionsTh.textContent = 'Actions'
     tr.appendChild(actionsTh)
 
-    table.appendChild(tr)
+    this.table.appendChild(tr)
 
     this.state.itemsToShow.forEach((item) => {
-      const row = table.insertRow(-1)
+      const row = this.table.insertRow(-1)
       
       this.props.headers.forEach((header, index) => {
         const cell = row.insertCell(index)
@@ -98,15 +107,22 @@ export default class ItemsTable extends HTMLElement {
       actionsCell.appendChild(removeButton)
     })
 
-    return !this.state.itemsToShow?.length 
-      ? `${table.outerHTML} <p class="no-data">Not Available Data :(</p>`
-      : table.outerHTML
+    this.shadowRoot.appendChild(this.table)
+
+    if (!this.state.itemsToShow?.length) {
+      const noDataLegend = document.createElement('p')
+      noDataLegend.textContent = 'Not Available Data :('
+      noDataLegend.classList.add('no-data')
+      this.shadowRoot.appendChild(noDataLegend)
+    }
   }
 
   connectedCallback() {
     this.props.itemName = this.getAttribute('data-item-name')
     this.props.headers = JSON.parse(this.getAttribute('data-headers').replace(/'/g, '"'))
     this.props.items = JSON.parse(this.getAttribute('data-items').replace(/'/g, '"'))
+    
+    this.table.id = this.props.itemName.toLowerCase()
 
     this.state.itemsToShow = this.props.items
 
@@ -131,8 +147,9 @@ export default class ItemsTable extends HTMLElement {
       >
         <add-circle-icon slot="icon"></add-circle-icon>
       </button-icon>
-      ${this._renderTable()}
     `
+
+    this._renderTable()
 
     const filterInput = this.shadowRoot.querySelector('.filter-input')
     filterInput.addEventListener('input', this._handleFilterInput)

@@ -11,27 +11,32 @@ export default class ButtonIcon extends HTMLElement {
       showBorder: false
     }
 
+    this.button = null
     this.badge = null
 
     this._handleButtonClick = this._handleButtonClick.bind(this)
+    this._renderBadge = this._renderBadge.bind(this)
   }
 
   _handleButtonClick() {
     this.dispatchEvent(new CustomEvent('internalclick'))
   }
 
+  _renderBadge(resetBadge = false) {
+    if (resetBadge) {
+      this.button.removeChild(this.badge)
+    }
+
+    this.badge = document.createElement('span')
+    this.badge.classList.add('badge')
+    this.badge.textContent = this.props.buttonBagdeText
+    this.button.appendChild(this.badge)
+  }
+
   connectedCallback() {
     this.props.buttonText = this.getAttribute('data-text') ?? ''
     this.props.buttonBagdeText = this.getAttribute('data-badge') ?? ''
     this.props.showBorder = this.hasAttribute('data-show-border')
-
-    if (this.props.buttonBagdeText) {
-      this.badge = document.createElement('span')
-      this.badge.classList.add('badge')
-      this.badge.textContent = this.props.buttonBagdeText
-    } else {
-      this.badge = null
-    }
 
     this.render()
   }
@@ -41,6 +46,7 @@ export default class ButtonIcon extends HTMLElement {
 
     if (attributeName === 'data-badge') {
       this.props.buttonBagdeText = newValue
+      this._renderBadge(true)
     }
   }
 
@@ -50,12 +56,15 @@ export default class ButtonIcon extends HTMLElement {
       <button class="btn ${this.props.showBorder ? 'show-border' : ''}" type="button" title="${this.props.buttonText}">
         <slot name="icon"></slot>
         ${this.props.buttonText}
-        ${this.badge ? this.badge.outerHTML : ''}
       </button>
     `
 
-    const button = this.shadowRoot.querySelector('.btn')
-    button.addEventListener('click', this._handleButtonClick)
+    if (this.props.buttonBagdeText) {
+      this._renderBadge()
+    }
+
+    this.button = this.shadowRoot.querySelector('.btn')
+    this.button.addEventListener('click', this._handleButtonClick)
   }
 }
 
