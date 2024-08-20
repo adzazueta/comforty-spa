@@ -1,9 +1,10 @@
 // Firebase
+import { getDownloadURL, getStorage, ref as storageRef, uploadBytes } from 'firebase/storage'
 import {
   child,
   get,
   getDatabase,
-  ref,
+  ref as databaseRef,
   remove,
   set,
   serverTimestamp,
@@ -14,19 +15,24 @@ import {
 import User from './User.js'
 
 export default class Products {
-  static createProduct(name, description, price, category, image) {
+  static async createProduct(name, description, price, category, image) {
     const db = getDatabase()
+    const storage = getStorage()
     
     try {
       const uuid = crypto.randomUUID()
+      const imageRef = storageRef(storage, `images/products/${uuid}.${image.extension}`)
 
-      set(ref(db, `products/${uuid}`), {
+      const uploadedImage = await uploadBytes(imageRef, image.file)
+      const imageURL = await getDownloadURL(uploadedImage.ref)
+
+      set(databaseRef(db, `products/${uuid}`), {
         uuid,
         name,
         description,
         price,
         category,
-        image,
+        image: imageURL,
         createdBy: User.getUserData().displayName,
         updatedBy: User.getUserData().displayName,
         createdAt: serverTimestamp(),
@@ -41,7 +47,7 @@ export default class Products {
     const db = getDatabase()
 
     try {
-      const products = await get(child(ref(db, `products/${uuid}`)))
+      const products = await get(child(databaseRef(db, `products/${uuid}`)))
       if (products.exists()) return Object.values(products.val())
       else return null
     } catch (error) {
@@ -53,7 +59,7 @@ export default class Products {
     const db = getDatabase()
 
     try {
-      const products = await get(child(ref(db), 'products/'))
+      const products = await get(child(databaseRef(db), 'products/'))
       if (products.exists()) return Object.values(products.val())
       else return []
     } catch (error) {
@@ -61,19 +67,29 @@ export default class Products {
     }
   }
 
-  static updateProduct(uuid, name, description, price, category, image) {
+  static async updateProduct(uuid, name, description, price, category, image = '') {
     const db = getDatabase()
-
+    const storage = getStorage()
+    
     try {
-      update(ref(db, `products/${uuid}`), {
+      const dataToUpdate = {
         name,
         description,
         price,
         category,
-        image,
         updatedAt: serverTimestamp(),
         updatedBy: User.getUserData().displayName
-      })
+      }
+
+      if (image && typeof image !== 'string') {
+        const imageRef = storageRef(storage, `images/products/${uuid}.${image.extension}`)
+
+        const uploadedImage = await uploadBytes(imageRef, image.file)
+        const imageURL = await getDownloadURL(uploadedImage.ref)
+        dataToUpdate.image = imageURL
+      }
+
+      update(databaseRef(db, `products/${uuid}`), dataToUpdate)
     } catch (error) {
       throw new Error(error)
     }
@@ -83,7 +99,7 @@ export default class Products {
     const db = getDatabase()
 
     try {
-      remove(ref(db, `products/${uuid}`))
+      remove(databaseRef(db, `products/${uuid}`))
     } catch (error) {
       throw new Error(error)
     }

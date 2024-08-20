@@ -59,12 +59,12 @@ export default class ButtonIcon extends HTMLElement {
       </button>
     `
 
+    this.button = this.shadowRoot.querySelector('.btn')
+    this.button.addEventListener('click', this._handleButtonClick)
+
     if (this.props.buttonBagdeText) {
       this._renderBadge()
     }
-
-    this.button = this.shadowRoot.querySelector('.btn')
-    this.button.addEventListener('click', this._handleButtonClick)
   }
 }
 
@@ -91,7 +91,6 @@ const css = `
     &:hover {
       background-color: var(--primary-color);
       color: var(--text-color-light);
-      border: 1px solid transparent;
 
       & .badge {
         background-color: var(--text-color-light);
