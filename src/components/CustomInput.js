@@ -10,19 +10,13 @@ export default class CustomInput extends HTMLElement {
       type: '',
       name: '',
       label: '',
-      maxWidth: ''
+      maxWidth: '',
+      accept: '',
+      value: ''
     }
 
     this._handleBeforeInputEvent = this._handleBeforeInputEvent.bind(this)
     this._handleInputEvent = this._handleInputEvent.bind(this)
-  }
-
-  get value() {
-    return this.shadowRoot.querySelector('.custom-input').value
-  }
-
-  set value(value) {
-    this.shadowRoot.querySelector('.custom-input').value = value
   }
 
   _handleBeforeInputEvent(event) {
@@ -33,7 +27,11 @@ export default class CustomInput extends HTMLElement {
   }
 
   _handleInputEvent(event) {
-    this._internals.setFormValue(event.target.value)
+    if (this.props.type === 'file') {
+      this._internals.setFormValue(event.target.files[0])
+    } else {
+      this._internals.setFormValue(event.target.value)
+    }
   }
 
   connectedCallback() {
@@ -41,7 +39,10 @@ export default class CustomInput extends HTMLElement {
     this.props.type = this.getAttribute('data-type') ?? 'text'
     this.props.label = this.getAttribute('data-label') ?? 'Input your data'
     this.props.maxWidth = this.getAttribute('data-max-width') ?? '285px'
+    this.props.accept = this.getAttribute('data-accept') ?? ''
+    this.props.value = this.getAttribute('data-value') ?? ''
 
+    this._internals.setFormValue(this.props.value)
     this.render()
   }
 
@@ -53,8 +54,10 @@ export default class CustomInput extends HTMLElement {
         class="custom-input"
         style="--custom-input-width: ${this.props.maxWidth};"
         type="${this.props.type}"
+        ${this.props.accept ? 'accept="'+this.props.accept+'"' : ''}
         name="${this.props.name}"
         placeholder="${this.props.label}"
+        value="${this.props.value}"
       />
     `
     const customInput = this.shadowRoot.querySelector('.custom-input')
