@@ -1,7 +1,8 @@
 // Layout
 import '../layouts/GeneralLayout.js'
 
-// Components
+// Sections
+import '../sections/HomeBannerSection.js'
 
 export default class HomeView extends HTMLElement {
   constructor() {
@@ -17,12 +18,22 @@ export default class HomeView extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>${css}</style>
       <general-layout>
-        <h1>HomePage</h1>
+        <div class="sections-wrapper">
+          <home-banner-section></home-banner-section>
+        </div>
       </general-layout>
     `
   }
 }
 
-const css = ``
+const css = `
+  :host {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    max-width: var(--content-wrapper-width);
+    width: 100%;
+  }
+`
 
 customElements.define('home-view', HomeView)
