@@ -1,3 +1,9 @@
+// Utils
+import pubSub from '../utils/PubSub.js'
+
+// Stores
+import cartStore from '../stores/CartStore.js'
+
 // Icons
 import '../components/icons/UserIcon.js'
 import '../components/icons/CartIcon.js'
@@ -18,9 +24,19 @@ export default class GeneralLayout extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
+
+    this.cartButton = null
+
+    this._handleCartStoreChange = this._handleCartStoreChange.bind(this)
+  }
+
+  _handleCartStoreChange() {
+    this.cartButton.setAttribute('data-badge', cartStore.totalItems)
   }
 
   connectedCallback() {
+    pubSub.subscribe('cartStoreChange', this._handleCartStoreChange)
+
     this.render()
   }
 
@@ -100,6 +116,8 @@ export default class GeneralLayout extends HTMLElement {
         </div>
       </footer>
     `
+
+    this.cartButton = this.shadowRoot.querySelector('#cart')
   }
 }
 

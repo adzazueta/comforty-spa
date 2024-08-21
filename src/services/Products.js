@@ -14,8 +14,11 @@ import {
 // Services
 import User from './User.js'
 
+// Utils
+import { getRandomNumber } from '../utils/Numbers.js'
+
 export default class Products {
-  static async createProduct(name, description, price, category, image) {
+  static async createProduct(name, description, price, inventory, category, image) {
     const db = getDatabase()
     const storage = getStorage()
     
@@ -26,13 +29,18 @@ export default class Products {
       const uploadedImage = await uploadBytes(imageRef, image.file)
       const imageURL = await getDownloadURL(uploadedImage.ref)
 
+      const sales = getRandomNumber(0, Math.floor(inventory / 2))
+
       set(databaseRef(db, `products/${uuid}`), {
         uuid,
         name,
         description,
         price,
+        inventory: inventory - sales,
         category,
         image: imageURL,
+        rating: getRandomNumber(3, 5, 1),
+        sales,
         createdBy: User.getUserData().displayName,
         updatedBy: User.getUserData().displayName,
         createdAt: serverTimestamp(),
@@ -67,7 +75,7 @@ export default class Products {
     }
   }
 
-  static async updateProduct(uuid, name, description, price, category, image = '') {
+  static async updateProduct(uuid, name, description, price, inventory, category, image = '') {
     const db = getDatabase()
     const storage = getStorage()
     
@@ -76,6 +84,7 @@ export default class Products {
         name,
         description,
         price,
+        inventory,
         category,
         updatedAt: serverTimestamp(),
         updatedBy: User.getUserData().displayName

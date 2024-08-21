@@ -14,7 +14,7 @@ export default class CategoriesSlider extends HTMLElement {
       currentIndex: 1
     }
 
-    this.props = {
+    this.state = {
       categories: []
     }
 
@@ -27,7 +27,7 @@ export default class CategoriesSlider extends HTMLElement {
   }
 
   _renderItems() {
-    this.props.categories.forEach((category) => {
+    this.state.categories.forEach((category) => {
       const sliderItem = document.createElement('category-card')
       sliderItem.setAttribute('data-category', JSON.stringify(category))
       sliderItem.classList.add('slider-item')
@@ -60,7 +60,7 @@ export default class CategoriesSlider extends HTMLElement {
   }
 
   async connectedCallback() {
-    this.props.categories = await Categories.getAllCategories()
+    this.state.categories = await Categories.getAllCategories()
 
     this.render()
   }

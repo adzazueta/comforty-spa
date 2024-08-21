@@ -30,6 +30,7 @@ export default class EditProductDialog extends HTMLElement {
     event.preventDefault()
     try {
       const formData = new FormData(event.target)
+
       let image = formData.get('image')
       if (image && typeof image !== 'string') {
         image = {
@@ -42,7 +43,8 @@ export default class EditProductDialog extends HTMLElement {
         this.props.productToEdit.uuid,
         formData.get('name'),
         formData.get('description'),
-        formData.get('price'),
+        Number(formData.get('price')),
+        Number(formData.get('inventory')),
         formData.get('category'),
         image
       )
@@ -86,8 +88,8 @@ export default class EditProductDialog extends HTMLElement {
         <div class="close-button-container">
           <close-icon></close-icon>
         </div>
+        <p class="title">Edit Product</p>
         <form>
-          <p class="title">Edit Product</p>
           <upload-image
             name="image"
             data-src="${productToEdit.image}"
@@ -109,12 +111,20 @@ export default class EditProductDialog extends HTMLElement {
             data-value="${productToEdit.description}"
           ></custom-input>
           <custom-input
-            style="--custom-input-width: 100%;"
+            style="--custom-input-width: calc(50% - 8px);"
             name="price"
             data-type="number"
             data-label="Price"
             data-max-width="100%"
             data-value="${productToEdit.price}"
+          ></custom-input>
+          <custom-input
+            style="--custom-input-width: calc(50% - 8px);"
+            name="inventory"
+            data-type="number"
+            data-label="Inventory"
+            data-max-width="100%"
+            data-value="${productToEdit.inventory}"
           ></custom-input>
           <custom-input
             style="--custom-input-width: 100%;"
@@ -183,7 +193,9 @@ const css = `
 
     & form {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      justify-content: center;
+      flex-wrap: wrap;
       gap: 16px;
     }
 
@@ -191,6 +203,7 @@ const css = `
       text-align: center;
       font-size: 26px;
       margin: 0;
+      margin-bottom: 16px;
     }
   }
 `

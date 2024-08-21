@@ -11,8 +11,6 @@ export default class CategoryCard extends HTMLElement {
   connectedCallback() {
     this.props.category = JSON.parse(this.getAttribute('data-category'))
 
-    console.log(this.props.category)
-
     this.render()
   }
 
@@ -57,6 +55,7 @@ const css = `
         width: 100%;
         height: 100%;
         border-radius: var(--card-border-radius);
+        object-fit: cover;
       }
   
       & .category-info {
