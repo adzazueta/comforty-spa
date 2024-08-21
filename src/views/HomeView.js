@@ -4,6 +4,7 @@ import '../layouts/GeneralLayout.js'
 // Sections
 import '../sections/HomeBannerSection.js'
 import '../sections/CategoriesSlider.js'
+import '../sections/FeaturedProducts.js'
 
 export default class HomeView extends HTMLElement {
   constructor() {
@@ -22,6 +23,7 @@ export default class HomeView extends HTMLElement {
         <div class="sections-wrapper">
           <home-banner-section></home-banner-section>
           <categories-slider></categories-slider>
+          <featured-products></featured-products>
         </div>
       </general-layout>
     `

@@ -17,7 +17,7 @@ export default class AdminProductsView extends HTMLElement {
 
     this.state = {
       products: [],
-      headers: ['Name', 'Description', 'Price', 'Category']
+      headers: ['Name', 'Description', 'Price', 'Inventory', 'Sales', 'Rating', 'Category']
     }
 
     this.adminLayout = null
@@ -75,7 +75,6 @@ export default class AdminProductsView extends HTMLElement {
   }
 
   _handleCloseDialog(event) {
-    console.log(event.detail)
     if (event.detail.action === 'add') this.adminLayout.removeChild(this.addDialog)
     if (event.detail.action === 'edit') this.adminLayout.removeChild(this.editDialog)
     if (event.detail.action === 'remove') this.adminLayout.removeChild(this.removeDialog)

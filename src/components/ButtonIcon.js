@@ -1,5 +1,5 @@
 export default class ButtonIcon extends HTMLElement {
-  static observedAttribites = ['data-badge']
+  static observedAttributes = ['data-badge']
   
   constructor() {
     super()
@@ -23,14 +23,16 @@ export default class ButtonIcon extends HTMLElement {
   }
 
   _renderBadge(resetBadge = false) {
-    if (resetBadge) {
-      this.button.removeChild(this.badge)
+    if (this.button) {
+      if (resetBadge) {
+        this.button.removeChild(this.badge)
+      }
+  
+      this.badge = document.createElement('span')
+      this.badge.classList.add('badge')
+      this.badge.textContent = this.props.buttonBagdeText
+      this.button.appendChild(this.badge)
     }
-
-    this.badge = document.createElement('span')
-    this.badge.classList.add('badge')
-    this.badge.textContent = this.props.buttonBagdeText
-    this.button.appendChild(this.badge)
   }
 
   connectedCallback() {

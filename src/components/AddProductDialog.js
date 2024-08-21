@@ -26,10 +26,12 @@ export default class AddProductDialog extends HTMLElement {
     event.preventDefault()
     try {
       const formData = new FormData(event.target)
+
       Products.createProduct(
         formData.get('name'),
         formData.get('description'),
-        formData.get('price'),
+        Number(formData.get('price')),
+        Number(formData.get('inventory')),
         formData.get('category'),
         {
           file: formData.get('image'),
@@ -72,8 +74,8 @@ export default class AddProductDialog extends HTMLElement {
         <div class="close-button-container">
           <close-icon></close-icon>
         </div>
+        <p class="title">Add Product</p>
         <form>
-          <p class="title">Add Product</p>
           <upload-image name="image"></upload-image>
           <custom-input
             style="--custom-input-width: 100%;"
@@ -90,10 +92,17 @@ export default class AddProductDialog extends HTMLElement {
             data-max-width="100%"
           ></custom-input>
           <custom-input
-            style="--custom-input-width: 100%;"
+            style="--custom-input-width: calc(50% - 8px);"
             name="price"
             data-type="number"
             data-label="Price"
+            data-max-width="100%"
+          ></custom-input>
+          <custom-input
+            style="--custom-input-width: calc(50% - 8px);"
+            name="inventory"
+            data-type="number"
+            data-label="Inventory"
             data-max-width="100%"
           ></custom-input>
           <custom-input
@@ -162,7 +171,9 @@ const css = `
 
     & form {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      justify-content: center;
+      flex-wrap: wrap;
       gap: 16px;
     }
 
@@ -170,6 +181,7 @@ const css = `
       text-align: center;
       font-size: 26px;
       margin: 0;
+      margin-bottom: 16px;
     }
   }
 `
