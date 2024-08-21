@@ -2,6 +2,7 @@
 import Categories from '../services/Categories.js'
 
 // Components
+import './UploadImage.js'
 import './CustomInput.js'
 import './ButtonCta.js'
 
@@ -29,10 +30,19 @@ export default class EditCategoryDialog extends HTMLElement {
     event.preventDefault()
     try {
       const formData = new FormData(event.target)
+      let image = formData.get('image')
+      if (image && typeof image !== 'string') {
+        image = {
+          file: formData.get('image'),
+          extension: formData.get('image').name.split('.').reverse()[0]
+        }
+      }
+
       Categories.updateCategory(
         this.props.categoryToEdit.uuid,
         formData.get('name'),
-        formData.get('description')
+        formData.get('description'),
+        image
       )
     } catch (error) {
       throw new Error(error)
@@ -76,6 +86,10 @@ export default class EditCategoryDialog extends HTMLElement {
         </div>
         <form>
           <p class="title">Edit Category</p>
+          <upload-image
+            name="image"
+            data-src="${categoryToEdit.image}"
+          ></upload-image>
           <custom-input
             style="--custom-input-width: 100%;"
             name="name"

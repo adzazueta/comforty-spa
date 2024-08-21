@@ -34,9 +34,11 @@ export default class GeneralLayout extends HTMLElement {
             <button-icon id="cart" data-text="Cart" data-badge="0">
               <cart-icon slot="icon"></cart-icon>
             </button-icon>
-            <button-icon>
-              <user-icon slot="icon"></user-icon>
-            </button-icon>
+            <a href="/admin" data-internal-link>
+              <button-icon>
+                <user-icon slot="icon"></user-icon>
+              </button-icon>
+            </a>
           </div>
         </div>
         <div class="nav">

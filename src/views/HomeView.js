@@ -3,6 +3,7 @@ import '../layouts/GeneralLayout.js'
 
 // Sections
 import '../sections/HomeBannerSection.js'
+import '../sections/CategoriesSlider.js'
 
 export default class HomeView extends HTMLElement {
   constructor() {
@@ -20,6 +21,7 @@ export default class HomeView extends HTMLElement {
       <general-layout>
         <div class="sections-wrapper">
           <home-banner-section></home-banner-section>
+          <categories-slider></categories-slider>
         </div>
       </general-layout>
     `
@@ -28,9 +30,6 @@ export default class HomeView extends HTMLElement {
 
 const css = `
   :host {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
     max-width: var(--content-wrapper-width);
     width: 100%;
   }

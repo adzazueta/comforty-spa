@@ -27,7 +27,7 @@ export default class UploadImage extends HTMLElement {
   }
 
   connectedCallback() {
-    this.props.src = this.getAttribute('data-src') ?? 'https://fakeimg.pl/250x200?text=+'
+    this.props.src = this.getAttribute('data-src') ?? 'https://fakeimg.pl/312x312?text=+'
     this.render()
   }
 
