@@ -1,4 +1,4 @@
-import './icons/ArrowIcon.js'
+import './icons/RightArrowIcon.js'
 
 export default class ButtonCta extends HTMLElement {
   static formAssociated = true
@@ -40,7 +40,7 @@ export default class ButtonCta extends HTMLElement {
     const button = this.shadowRoot.querySelector('button')
 
     if (this.props.showArrow) {
-      const icon = document.createElement('arrow-icon')
+      const icon = document.createElement('right-arrow-icon')
       this.arrowIcon = document.createElement('span')
       this.arrowIcon.classList.add('arrow-icon')
       this.arrowIcon.appendChild(icon)

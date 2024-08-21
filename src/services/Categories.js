@@ -1,9 +1,10 @@
 // Firebase
+import { getDownloadURL, getStorage, ref as storageRef, uploadBytes } from 'firebase/storage'
 import {
   child,
   get,
   getDatabase,
-  ref,
+  ref as databaseRef,
   remove,
   set,
   serverTimestamp,
@@ -14,16 +15,22 @@ import {
 import User from './User.js'
 
 export default class Categories {
-  static createCategory(name, description) {
+  static async createCategory(name, description, image) {
     const db = getDatabase()
+    const storage = getStorage()
     
     try {
       const uuid = crypto.randomUUID()
+      const imageRef = storageRef(storage, `images/categories/${uuid}.${image.extension}`)
 
-      set(ref(db, `categories/${uuid}`), {
+      const uploadedImage = await uploadBytes(imageRef, image.file)
+      const imageURL = await getDownloadURL(uploadedImage.ref)
+
+      set(databaseRef(db, `categories/${uuid}`), {
         uuid,
         name,
         description,
+        image: imageURL,
         createdBy: User.getUserData().displayName,
         updatedBy: User.getUserData().displayName,
         createdAt: serverTimestamp(),
@@ -38,7 +45,7 @@ export default class Categories {
     const db = getDatabase()
 
     try {
-      const categories = await get(child(ref(db, `categories/${uuid}`)))
+      const categories = await get(child(databaseRef(db, `categories/${uuid}`)))
       if (categories.exists()) return Object.values(categories.val())
       else return null
     } catch (error) {
@@ -50,7 +57,7 @@ export default class Categories {
     const db = getDatabase()
 
     try {
-      const categories = await get(child(ref(db), 'categories/'))
+      const categories = await get(child(databaseRef(db), 'categories/'))
       if (categories.exists()) return Object.values(categories.val())
       else return []
     } catch (error) {
@@ -58,16 +65,30 @@ export default class Categories {
     }
   }
 
-  static updateCategory(uuid, name, description) {
+  static async updateCategory(uuid, name, description, image = '') {
     const db = getDatabase()
+    const storage = getStorage()
 
     try {
-      update(ref(db, `categories/${uuid}`), {
+      const dataToUpdate = {
         name,
         description,
+        price,
+        category,
         updatedAt: serverTimestamp(),
         updatedBy: User.getUserData().displayName
-      })
+      }
+
+      if (image && typeof image !== 'string') {
+        const imageUuid = crypto.randomUUID()
+        const imageRef = storageRef(storage, `images/categories/${imageUuid}.${image.extension}`)
+
+        const uploadedImage = await uploadBytes(imageRef, image.file)
+        const imageURL = await getDownloadURL(uploadedImage.ref)
+        dataToUpdate.image = imageURL
+      }
+
+      update(databaseRef(db, `categories/${uuid}`), dataToUpdate)
     } catch (error) {
       throw new Error(error)
     }
@@ -77,7 +98,7 @@ export default class Categories {
     const db = getDatabase()
 
     try {
-      remove(ref(db, `categories/${uuid}`))
+      remove(databaseRef(db, `categories/${uuid}`))
     } catch (error) {
       throw new Error(error)
     }

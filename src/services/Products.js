@@ -82,7 +82,8 @@ export default class Products {
       }
 
       if (image && typeof image !== 'string') {
-        const imageRef = storageRef(storage, `images/products/${uuid}.${image.extension}`)
+        const imageUuid = crypto.randomUUID()
+        const imageRef = storageRef(storage, `images/products/${imageUuid}.${image.extension}`)
 
         const uploadedImage = await uploadBytes(imageRef, image.file)
         const imageURL = await getDownloadURL(uploadedImage.ref)

@@ -2,6 +2,7 @@
 import Categories from '../services/Categories.js'
 
 // Components
+import './UploadImage.js'
 import './CustomInput.js'
 import './ButtonCta.js'
 
@@ -25,7 +26,14 @@ export default class AddCategoryDialog extends HTMLElement {
     event.preventDefault()
     try {
       const formData = new FormData(event.target)
-      Categories.createCategory(formData.get('name'), formData.get('description'))
+      Categories.createCategory(
+        formData.get('name'),
+        formData.get('description'),
+        {
+          file: formData.get('image'),
+          extension: formData.get('image').name.split('.').reverse()[0]
+        }
+      )
     } catch (error) {
       throw new Error(error)
     } finally {
@@ -64,6 +72,7 @@ export default class AddCategoryDialog extends HTMLElement {
         </div>
         <form>
           <p class="title">Add Category</p>
+          <upload-image name="image"></upload-image>
           <custom-input
             style="--custom-input-width: 100%;"
             name="name"

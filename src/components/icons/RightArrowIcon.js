@@ -1,4 +1,4 @@
-export default class ArrowIcon extends HTMLElement {
+export default class RightArrowIcon extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
@@ -17,4 +17,4 @@ export default class ArrowIcon extends HTMLElement {
   }
 }
 
-customElements.define('arrow-icon', ArrowIcon)
+customElements.define('right-arrow-icon', RightArrowIcon)
