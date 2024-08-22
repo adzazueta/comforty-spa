@@ -31,10 +31,10 @@ export default class ItemsTable extends HTMLElement {
   }
 
   _handleFilterInput(event) {
-    if (event.target.value) {
+    if (event.detail.value) {
       this.state.itemsToShow = this.props.items.filter((items) => {
-        return items.name.toLowerCase().includes(event.target.value.toLowerCase()) ||
-          items.description.toLowerCase().includes(event.target.value.toLowerCase())
+        return items.name.toLowerCase().includes(event.detail.value.toLowerCase()) ||
+          items.description.toLowerCase().includes(event.detail.value.toLowerCase())
       })
     } else {
       this.state.itemsToShow = this.props.items
@@ -137,7 +137,7 @@ export default class ItemsTable extends HTMLElement {
         style="--custom-input-width: 100%;"
         name="search"
         data-type="text"
-        data-label="Search ${this.props.itemName}"
+        data-label="Search ${this.props.itemName} by Name or Category"
         data-max-width="100%"
       ></custom-input>
       <button-icon
@@ -152,7 +152,7 @@ export default class ItemsTable extends HTMLElement {
     this._renderTable()
 
     const filterInput = this.shadowRoot.querySelector('.filter-input')
-    filterInput.addEventListener('input', this._handleFilterInput)
+    filterInput.addEventListener('custominput', this._handleFilterInput)
 
     const addItemButton = this.shadowRoot.querySelector('.add-item-btn')
     addItemButton.addEventListener('internalclick', this._handleAddItemClick)

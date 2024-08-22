@@ -14,9 +14,8 @@ export default class HomeNavbar extends HTMLElement {
       <nav>
         <a href="/" data-internal-link>Home</a>
         <a href="/shop" data-internal-link>Shop</a>
-        <a href="/product" data-internal-link>Product</a>
-        <a href="/pages" data-internal-link>Pages</a>
-        <a href="/about" data-internal-link>About</a>
+        <a href="/admin" data-internal-link>Admin</a>
+        <a href="/login" data-internal-link>Login</a>
       </nav>
     `
   }

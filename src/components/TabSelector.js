@@ -4,7 +4,8 @@ export default class TabSelector extends HTMLElement {
     this.attachShadow({ mode: 'open' })
 
     this.props = {
-      tabs: []
+      tabs: [],
+      initalTab: ''
     }
 
     this.tabsContainer = null
@@ -21,12 +22,15 @@ export default class TabSelector extends HTMLElement {
         const tabElement = document.createElement('p')
         tabElement.classList.add('tab-item')
 
-        if (index === 0) {
-          tabElement.classList.add('active')
+        if (
+          (this.props.initalTab && this.props.initalTab === tab.value) || 
+          (!this.props.initalTab && index === 0)
+        ) {
+          tabElement.classList.add('active');
         }
 
-        tabElement.setAttribute('data-tab', tab.toLowerCase().replace(' ', '-'))
-        tabElement.textContent = tab
+        tabElement.setAttribute('data-tab', tab.value)
+        tabElement.textContent = tab.label
 
         this.tabsContainer.appendChild(tabElement)
       })
@@ -52,6 +56,7 @@ export default class TabSelector extends HTMLElement {
 
   connectedCallback() {
     this.props.tabs = JSON.parse(this.getAttribute('data-tabs')) ?? []
+    this.props.initalTab = this.getAttribute('data-initial-tab') ?? ''
 
     this.render()
   }

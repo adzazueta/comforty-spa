@@ -29,8 +29,14 @@ export default class CustomInput extends HTMLElement {
   _handleInputEvent(event) {
     if (this.props.type === 'file') {
       this._internals.setFormValue(event.target.files[0])
+      this.dispatchEvent(new CustomEvent('custominput', {
+        detail: { value: event.target.files[0] }
+      }))
     } else {
       this._internals.setFormValue(event.target.value)
+      this.dispatchEvent(new CustomEvent('custominput', {
+        detail: { value: event.target.value }
+      }))
     }
   }
 

@@ -17,7 +17,7 @@ export default class AdminCategoriesView extends HTMLElement {
 
     this.state = {
       categories: [],
-      headers: ['Name', 'Description']
+      headers: ['Code', 'Name', 'Description']
     }
 
     this.adminLayout = null
@@ -110,6 +110,10 @@ export default class AdminCategoriesView extends HTMLElement {
 const css = `
   .wrapper {
     padding: 24px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    height: 100%;
+    max-height: calc(100vh - 56px);
   }
 
   .title {

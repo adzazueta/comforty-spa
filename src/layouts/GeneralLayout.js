@@ -4,6 +4,9 @@ import pubSub from '../utils/PubSub.js'
 // Stores
 import cartStore from '../stores/CartStore.js'
 
+// Services
+import Categories from '../services/Categories.js'
+
 // Icons
 import '../components/icons/UserIcon.js'
 import '../components/icons/CartIcon.js'
@@ -25,17 +28,35 @@ export default class GeneralLayout extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
 
+    this.state = {
+      categories: []
+    }
+
     this.cartButton = null
+    this.categoryLinksContainer = null
 
     this._handleCartStoreChange = this._handleCartStoreChange.bind(this)
+    this._renderCategoryLinks = this._renderCategoryLinks.bind(this)
   }
 
   _handleCartStoreChange() {
     this.cartButton.setAttribute('data-badge', cartStore.totalItems)
   }
 
-  connectedCallback() {
+  _renderCategoryLinks() {
+    this.state.categories.forEach((category) => {
+      const link = document.createElement('a')
+      link.setAttribute('href', `/shop/${category.code}`)
+      link.setAttribute('data-internal-link', '')
+      link.textContent = category.name
+
+      this.categoryLinksContainer.appendChild(link)
+    })
+  }
+
+  async connectedCallback() {
     pubSub.subscribe('cartStoreChange', this._handleCartStoreChange)
+    this.state.categories = await Categories.getAllCategories()
 
     this.render()
   }
@@ -47,7 +68,7 @@ export default class GeneralLayout extends HTMLElement {
         <div class="wrapper">
           <page-logo></page-logo>
           <div class="user-links">
-            <button-icon id="cart" data-text="Cart" data-badge="0">
+            <button-icon id="cart" data-text="Cart" data-badge="${cartStore.totalItems}">
               <cart-icon slot="icon"></cart-icon>
             </button-icon>
             <a href="/admin" data-internal-link>
@@ -90,23 +111,16 @@ export default class GeneralLayout extends HTMLElement {
             </div>
           </div>
           <div class="col">
-            <p class="footer-col-title">Category</p>
-            <div class="footer-links">
-              <a href="/" data-internal-link>Sofa</a>
-              <a href="/shop" data-internal-link>Armchair</a>
-              <a href="/shop" data-internal-link>Wing Chair</a>
-              <a href="/shop" data-internal-link>Desk Chair</a>
-              <a href="/shop" data-internal-link>Wooden Chair</a>
-              <a href="/shop" data-internal-link>Park Bench</a>
-            </div>
+            <p class="footer-col-title">Categories</p>
+            <div class="footer-links category-links"></div>
           </div>
           <div class="col">
-            <p class="footer-col-title">Support</p>
+            <p class="footer-col-title">Pages</p>
             <div class="footer-links">
-              <a href="/shop" data-internal-link>Help & Support</a>
-              <a href="/shop" data-internal-link>Tearms & Conditions</a>
-              <a href="/shop" data-internal-link>Privacy Policy</a>
-              <a href="/shop" data-internal-link>Help</a>
+              <a href="/" data-internal-link>Home</a>
+              <a href="/shop" data-internal-link>Shop</a>
+              <a href="/admin" data-internal-link>Admin</a>
+              <a href="/login" data-internal-link>Login</a>
             </div>
           </div>
           <div class="col">
@@ -118,6 +132,8 @@ export default class GeneralLayout extends HTMLElement {
     `
 
     this.cartButton = this.shadowRoot.querySelector('#cart')
+    this.categoryLinksContainer = this.shadowRoot.querySelector('.category-links')
+    this._renderCategoryLinks()
   }
 }
 

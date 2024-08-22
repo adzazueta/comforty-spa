@@ -14,6 +14,10 @@ export default class ProductCard extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
 
+    this.prop = {
+      product: null
+    }
+
     this.state = {
       product: null
     }
@@ -50,8 +54,6 @@ export default class ProductCard extends HTMLElement {
 
   _renderActions() {
     const { product } = this.state
-
-    console.log(product)
     
     if (product.amount) {
       if (this.cartButton) {
@@ -104,8 +106,8 @@ export default class ProductCard extends HTMLElement {
   }
 
   connectedCallback() {
-    this.state.product = cartStore.items.find((item) => item.uuid === product.uuid) ?? JSON.parse(this.getAttribute('data-product'))
-
+    this.prop.product = JSON.parse(this.getAttribute('data-product'))
+    this.state.product = cartStore.items.find((item) => item.uuid === this.prop.product.uuid) ?? this.prop.product
 
     this.render()
   }

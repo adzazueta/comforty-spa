@@ -26,6 +26,7 @@ export default class AddCategoryDialog extends HTMLElement {
     event.preventDefault()
     try {
       const formData = new FormData(event.target)
+      
       Categories.createCategory(
         formData.get('name'),
         formData.get('description'),

@@ -21,13 +21,12 @@ export default class UploadImage extends HTMLElement {
       const src = URL.createObjectURL(event.target.files[0])
       this.img.src = src
       this._internals.setFormValue(event.target.files[0])
-    } else {
-      this._internals.setFormValue(this.props.src)
     }
   }
 
   connectedCallback() {
     this.props.src = this.getAttribute('data-src') ?? 'https://fakeimg.pl/312x312?text=+'
+    this._internals.setFormValue(this.props.src)
     this.render()
   }
 

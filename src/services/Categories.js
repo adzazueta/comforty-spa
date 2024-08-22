@@ -28,6 +28,7 @@ export default class Categories {
 
       set(databaseRef(db, `categories/${uuid}`), {
         uuid,
+        code: name.toLowerCase().replace(' ', '-'),
         name,
         description,
         image: imageURL,
@@ -73,8 +74,6 @@ export default class Categories {
       const dataToUpdate = {
         name,
         description,
-        price,
-        category,
         updatedAt: serverTimestamp(),
         updatedBy: User.getUserData().displayName
       }
