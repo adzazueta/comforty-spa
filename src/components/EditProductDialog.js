@@ -1,9 +1,11 @@
 // Services
 import Products from '../services/Products.js'
+import Categories from '../services/Categories.js'
 
 // Components
 import './UploadImage.js'
 import './CustomInput.js'
+import './CustomSelect.js'
 import './ButtonCta.js'
 
 // Icons
@@ -18,12 +20,18 @@ export default class EditProductDialog extends HTMLElement {
       productToEdit: {}
     }
 
+    this.state = {
+      categories: []
+    }
+
     this.dialog = null
     this.form = null
+    this.categorySelector = null
 
     this._handleEditProduct = this._handleEditProduct.bind(this)
     this._handleCloseButtonClick = this._handleCloseButtonClick.bind(this)
     this._handleSubmitFromInputs = this._handleSubmitFromInputs.bind(this)
+    this._renderCategoryOptions = this._renderCategoryOptions.bind(this)
   }
 
   _handleEditProduct(event) {
@@ -67,6 +75,16 @@ export default class EditProductDialog extends HTMLElement {
 
   _handleSubmitFromInputs() {
     this.form.requestSubmit()
+  }
+
+  async _renderCategoryOptions() {
+    const categories = await Categories.getAllCategories()
+    this.state.categories = categories.map((category) => ({
+      value: category.code,
+      label: category.name
+    }))
+
+    this.categorySelector.setAttribute('data-options', JSON.stringify(this.state.categories))
   }
 
   connectedCallback() {
@@ -126,14 +144,13 @@ export default class EditProductDialog extends HTMLElement {
             data-max-width="100%"
             data-value="${productToEdit.inventory}"
           ></custom-input>
-          <custom-input
-            style="--custom-input-width: 100%;"
+          <custom-select
+            style="--custom-select-width: 100%;"
             name="category"
-            data-type="text"
             data-label="Category"
             data-max-width="100%"
             data-value="${productToEdit.category}"
-          ></custom-input>
+          ></custom-select>
           <button-cta data-type="submit">
             Edit Product
           </button-cta>
@@ -143,6 +160,10 @@ export default class EditProductDialog extends HTMLElement {
 
     this.dialog = this.shadowRoot.querySelector('dialog')
     this.form = this.shadowRoot.querySelector('form')
+    this.categorySelector = this.shadowRoot.querySelector('custom-select')
+    
+    this._renderCategoryOptions()
+
     const closeButton = this.shadowRoot.querySelector('close-icon')
     const customInputs = this.shadowRoot.querySelectorAll('custom-input')
     const submitButton = this.shadowRoot.querySelector('button-cta')

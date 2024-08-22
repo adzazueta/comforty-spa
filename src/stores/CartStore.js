@@ -4,7 +4,7 @@ import pubSub from '../utils/PubSub.js'
 class CartStore {
   constructor() {
     this.storeData = {
-      items: []
+      items: JSON.parse(sessionStorage.getItem('cartStore:items')) ?? []
     }
 
     this.storeProxy = new Proxy(this.storeData, {
@@ -15,6 +15,7 @@ class CartStore {
       set: (target, property, value) => {
         target[property] = value
         pubSub.publish('cartStoreChange', { property, value })
+        sessionStorage.setItem(`cartStore:${property}`, JSON.stringify(value))
         return true
       },
     });

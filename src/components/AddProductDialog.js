@@ -1,9 +1,11 @@
 // Services
 import Products from '../services/Products.js'
+import Categories from '../services/Categories.js'
 
 // Components
 import './UploadImage.js'
 import './CustomInput.js'
+import './CustomSelect.js'
 import './ButtonCta.js'
 
 // Icons
@@ -14,12 +16,18 @@ export default class AddProductDialog extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
 
+    this.state = {
+      categories: []
+    }
+
     this.dialog = null
     this.form = null
+    this.categorySelector = null
 
     this._handleAddProduct = this._handleAddProduct.bind(this)
     this._handleCloseButtonClick = this._handleCloseButtonClick.bind(this)
     this._handleSubmitFromInputs = this._handleSubmitFromInputs.bind(this)
+    this._renderCategoryOptions = this._renderCategoryOptions.bind(this)
   }
 
   _handleAddProduct(event) {
@@ -57,6 +65,16 @@ export default class AddProductDialog extends HTMLElement {
 
   _handleSubmitFromInputs() {
     this.form.requestSubmit()
+  }
+
+  async _renderCategoryOptions() {
+    const categories = await Categories.getAllCategories()
+    this.state.categories = categories.map((category) => ({
+      value: category.code,
+      label: category.name
+    }))
+
+    this.categorySelector.setAttribute('data-options', JSON.stringify(this.state.categories))
   }
 
   connectedCallback() {
@@ -105,13 +123,12 @@ export default class AddProductDialog extends HTMLElement {
             data-label="Inventory"
             data-max-width="100%"
           ></custom-input>
-          <custom-input
-            style="--custom-input-width: 100%;"
+          <custom-select
+            style="--custom-select-width: 100%;"
             name="category"
-            data-type="text"
             data-label="Category"
             data-max-width="100%"
-          ></custom-input>
+          ></custom-select>
           <button-cta data-type="submit" >
             Add Product
           </button-cta>
@@ -121,6 +138,10 @@ export default class AddProductDialog extends HTMLElement {
 
     this.dialog = this.shadowRoot.querySelector('dialog')
     this.form = this.shadowRoot.querySelector('form')
+    this.categorySelector = this.shadowRoot.querySelector('custom-select')
+    
+    this._renderCategoryOptions()
+
     const closeButton = this.shadowRoot.querySelector('close-icon')
     const customInputs = this.shadowRoot.querySelectorAll('custom-input')
     const submitButton = this.shadowRoot.querySelector('button-cta')

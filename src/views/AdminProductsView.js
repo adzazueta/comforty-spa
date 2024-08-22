@@ -110,6 +110,10 @@ export default class AdminProductsView extends HTMLElement {
 const css = `
   .wrapper {
     padding: 24px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    height: 100%;
+    max-height: calc(100vh - 56px);
   }
 
   .title {

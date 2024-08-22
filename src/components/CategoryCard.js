@@ -19,7 +19,7 @@ export default class CategoryCard extends HTMLElement {
 
     this.shadowRoot.innerHTML = `
       <style>${css}</style>
-      <a href="/category/${category.name.toLowerCase()}" data-internal-link>
+      <a href="/shop/${category.code}" data-internal-link>
         <img alt="${category.name} category image" src="${category.image ?? 'https://fakeimg.pl/424x420?text=+'}" />
         <div class="category-info">
           <p class="name">${category.name}</p>

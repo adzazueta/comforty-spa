@@ -28,7 +28,9 @@ export default class HomeBannerSection extends HTMLElement {
         <div class="banner-content">
           <h1 class="title">Welcome to Comforty</h1>
           <h2 class="subtitle">Best Furniture Collection For Your Interior.</h2>
-          <button-cta data-show-arrow>Shop Now</button-cta>
+          <a href="/shop" data-internal-link>
+            <button-cta data-show-arrow>Shop Now</button-cta>
+          </a>
         </div>
         <div class="benefits-card">
           <div class="item">
@@ -93,6 +95,10 @@ const css = `
         left: 5%;
         top: 20%;
         z-index: 999;
+        
+        & a {
+          text-decoration: none;
+        }
   
         & .title {
           font-size: 14px;
