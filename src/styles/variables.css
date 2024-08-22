@@ -1,20 +1,26 @@
 :root, :host {
-  --primary-color: #E1A81D;
-  --secondary-color: #D0534E;
-  --primary-gradient: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-  --background-color: #ffffff;
-  --background-color-accent: #F0F2F3;
-  --background-color-hover: #383641;
-  --text-color: #ffffff;
+  --primary-color: #029FAE;
+  --bg-color: #ffffff;
+  --bg-accent: #F0F2F3;
+  --bg-hover: #383641;
+  --bg-button: #ffffff;
+
+  --text-color-light: #ffffff;
+  --text-color-dark: #272343;
+  --input-text-color: #9a9caa;
+
+  --border-color: #e1e3e5;
 
   --content-wrapper-width: 1320px;
-}
+  --icon-button-size: 44px;
+  --button-border-radius: 8px;
+  --button-border: 1px solid transparent;
+  
+  --input-border-radius: 8px;
+  --input-border: 1px solid #e1e3e5;
 
-@media (prefers-color-scheme: light) {
-  :root, :host {
-    --background-color: #f5f4fe;
-    --background-color-accent: #ffffff;
-    --background-color-hover: #e1dffd;
-    --text-color: #000000;
-  }
+  --card-border-radius: 12px;
+  --card-box-shadow: 0 0 30px rgb(39 35 67 / 12%);
+
+  --img-border-radius: 8px;
 }

@@ -1,10 +1,10 @@
 // Layout
 import '../layouts/GeneralLayout.js'
 
-// Assets
-import pageLost from '../assets/page-lost.webp'
+// Sections
+import '../sections/ShopByCategory.js'
 
-export default class NotFound extends HTMLElement {
+export default class ShopView extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
@@ -25,7 +25,7 @@ export default class NotFound extends HTMLElement {
       <style>${css}</style>
       <general-layout>
         <div class="sections-wrapper">
-          <img alt="Page not found" src="${pageLost}" />
+          <shop-by-category data-initial-category="${this.props.categoryParam}"></shop-by-category>
         </div>
       </general-layout>
     `
@@ -38,17 +38,9 @@ const css = `
     width: 100%;
 
     & .sections-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: center;
       width: 100%;
-
-      & img {
-        width: 600px;
-        object-fit: cover;
-      }
     }
   }
 `
 
-customElements.define('not-found', NotFound)
+customElements.define('shop-view', ShopView)
