@@ -8,7 +8,10 @@ import {
   remove,
   set,
   serverTimestamp,
-  update
+  update,
+  query,
+  orderByChild,
+  equalTo
 } from 'firebase/database'
 
 // Services
@@ -31,7 +34,7 @@ export default class Products {
 
       const sales = getRandomNumber(0, Math.floor(inventory / 2))
 
-      set(databaseRef(db, `products/${uuid}`), {
+      await set(databaseRef(db, `products/${uuid}`), {
         uuid,
         name,
         description,
@@ -58,6 +61,22 @@ export default class Products {
       const products = await get(child(databaseRef(db, `products/${uuid}`)))
       if (products.exists()) return Object.values(products.val())
       else return null
+    } catch (error) {
+      throw new Error(error)
+    }
+  }
+
+  static async getProductsByCategory(category) {
+    const db = getDatabase()
+  
+    try {
+      const products = await get(query(
+        databaseRef(db, 'products/'),
+        orderByChild('category'),
+        equalTo(category)
+      ))
+      if (products.exists()) return Object.values(products.val())
+      else return [];
     } catch (error) {
       throw new Error(error)
     }
@@ -99,17 +118,17 @@ export default class Products {
         dataToUpdate.image = imageURL
       }
 
-      update(databaseRef(db, `products/${uuid}`), dataToUpdate)
+      await update(databaseRef(db, `products/${uuid}`), dataToUpdate)
     } catch (error) {
       throw new Error(error)
     }
   }
 
-  static removeProduct(uuid) {
+  static async removeProduct(uuid) {
     const db = getDatabase()
 
     try {
-      remove(databaseRef(db, `products/${uuid}`))
+      await remove(databaseRef(db, `products/${uuid}`))
     } catch (error) {
       throw new Error(error)
     }

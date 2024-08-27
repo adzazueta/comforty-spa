@@ -25,16 +25,17 @@ export default class RemoveCategoryDialog extends HTMLElement {
     this._handleSubmitFromInputs = this._handleSubmitFromInputs.bind(this)
   }
 
-  _handleRemoveCategory(event) {
+  async _handleRemoveCategory(event) {
     event.preventDefault()
+    let error = false
     try {
-      Categories.removeCategory(this.props.categoryToRemove.uuid)
-    } catch (error) {
-      throw new Error(error)
+      await Categories.removeCategory(this.props.categoryToRemove.uuid)
+    } catch {
+      error = true
     } finally {
       this.dialog.close()
       this.dispatchEvent(new CustomEvent('removedcategory', {
-        detail: { action: 'remove' }
+        detail: { action: 'remove', error }
       }))
     }
   }
