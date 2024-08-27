@@ -26,12 +26,17 @@ export default class EditProductDialog extends HTMLElement {
 
     this.dialog = null
     this.form = null
+    this.imageUploader = null
+    this.customInputs = []
     this.categorySelector = null
+    this.closeButton = null
+    this.submitButton = null
 
     this._handleEditProduct = this._handleEditProduct.bind(this)
     this._handleCloseButtonClick = this._handleCloseButtonClick.bind(this)
     this._handleSubmitFromInputs = this._handleSubmitFromInputs.bind(this)
     this._renderCategoryOptions = this._renderCategoryOptions.bind(this)
+    this._checkFormValidity = this._checkFormValidity.bind(this)
   }
 
   _handleEditProduct(event) {
@@ -87,6 +92,13 @@ export default class EditProductDialog extends HTMLElement {
     this.categorySelector.setAttribute('data-options', JSON.stringify(this.state.categories))
   }
 
+  _checkFormValidity() {
+    const inputs = [...this.customInputs, this.categorySelector]
+    const isFormValid = inputs.every((input) => input.checkValidity())
+    if (isFormValid) this.submitButton.removeAttribute('data-disabled')
+    else this.submitButton.setAttribute('data-disabled', '')
+  }
+
   connectedCallback() {
     this.props.productToEdit = JSON.parse(this.getAttribute('data-product-to-edit'))
 
@@ -119,6 +131,7 @@ export default class EditProductDialog extends HTMLElement {
             data-label="Name"
             data-max-width="100%"
             data-value="${productToEdit.name}"
+            data-required
           ></custom-input>
           <custom-input
             style="--custom-input-width: 100%;"
@@ -127,22 +140,25 @@ export default class EditProductDialog extends HTMLElement {
             data-label="Description"
             data-max-width="100%"
             data-value="${productToEdit.description}"
+            data-required
           ></custom-input>
           <custom-input
-            style="--custom-input-width: calc(50% - 8px);"
+            style="--custom-input-width: calc(50% - 2px);"
             name="price"
             data-type="number"
             data-label="Price"
             data-max-width="100%"
             data-value="${productToEdit.price}"
+            data-required
           ></custom-input>
           <custom-input
-            style="--custom-input-width: calc(50% - 8px);"
+            style="--custom-input-width: calc(50% - 2px);"
             name="inventory"
             data-type="number"
             data-label="Inventory"
             data-max-width="100%"
             data-value="${productToEdit.inventory}"
+            data-required
           ></custom-input>
           <custom-select
             style="--custom-select-width: 100%;"
@@ -150,6 +166,7 @@ export default class EditProductDialog extends HTMLElement {
             data-label="Category"
             data-max-width="100%"
             data-value="${productToEdit.category}"
+            data-required
           ></custom-select>
           <button-cta data-type="submit">
             Edit Product
@@ -160,20 +177,27 @@ export default class EditProductDialog extends HTMLElement {
 
     this.dialog = this.shadowRoot.querySelector('dialog')
     this.form = this.shadowRoot.querySelector('form')
+    this.imageUploader = this.shadowRoot.querySelector('upload-image')
     this.categorySelector = this.shadowRoot.querySelector('custom-select')
     
     this._renderCategoryOptions()
 
-    const closeButton = this.shadowRoot.querySelector('close-icon')
-    const customInputs = this.shadowRoot.querySelectorAll('custom-input')
-    const submitButton = this.shadowRoot.querySelector('button-cta')
+    this.closeButton = this.shadowRoot.querySelector('close-icon')
+    this.customInputs = this.shadowRoot.querySelectorAll('custom-input')
+    this.submitButton = this.shadowRoot.querySelector('button-cta')
 
     this.form.addEventListener('submit', this._handleEditProduct)
-    closeButton.addEventListener('click', this._handleCloseButtonClick)
-    customInputs.forEach((custonInput) => {
+    this.closeButton.addEventListener('click', this._handleCloseButtonClick)
+    this.imageUploader.addEventListener('custominput', this._checkFormValidity)
+    this.customInputs.forEach((custonInput) => {
+      custonInput.addEventListener('custominput', this._checkFormValidity)
       custonInput.addEventListener('inputenter', this._handleSubmitFromInputs)
     })
-    submitButton.addEventListener('click', this._handleSubmitFromInputs)
+    this.categorySelector.addEventListener('customchange', this._checkFormValidity)
+    this.categorySelector.addEventListener('initializedoptions', this._checkFormValidity)
+    this.submitButton.addEventListener('click', this._handleSubmitFromInputs)
+
+    this._checkFormValidity()
   }
 }
 
@@ -184,7 +208,7 @@ const css = `
     border-radius: var(--card-border-radius);
     box-shadow: var(--card-box-shadow);
     border: none;
-    pediting: 24px 48px;
+    padding: 24px 48px;
     box-sizing: border-box;
     scale: 0;
 
@@ -217,7 +241,7 @@ const css = `
       flex-direction: row;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 4px;
     }
 
     & .title {

@@ -12,13 +12,17 @@ export default class CustomSelect extends HTMLElement {
       name: '',
       label: '',
       maxWidth: '',
-      value: ''
+      value: '',
+      required: false
     }
 
     this.customSelect = null
+    this.errorMessage = null
 
     this._renderOptions = this._renderOptions.bind(this)
     this._handleSelectChange = this._handleSelectChange.bind(this)
+    this._validateSelect = this._validateSelect.bind(this)
+    this.checkValidity = this.checkValidity.bind(this)
   }
 
   _renderOptions() {
@@ -46,10 +50,49 @@ export default class CustomSelect extends HTMLElement {
 
       this.customSelect.appendChild(optionElement)
     })
+
+    this.customSelect.value = this.props.value
+    this.dispatchEvent(new CustomEvent('initializedoptions'))
   }
 
   _handleSelectChange(event) {
-    this._internals.setFormValue(event.target.value)
+    const selectValue = event.target.value
+    const errorMessage = this._validateSelect()
+
+    if (errorMessage) {
+      this.customSelect.classList.add('error')
+      this.errorMessage.textContent = errorMessage
+      this.errorMessage.style.display = 'block'
+    } else {
+      this.customSelect.classList.remove('error')
+      this.errorMessage.style.display = 'none'
+    }
+
+    this._internals.setFormValue(selectValue)
+    this.dispatchEvent(new CustomEvent('customchange', {
+      detail: { value: selectValue }
+    }))
+  }
+
+  _validateSelect() {
+    const selectValue = this.customSelect.value
+    let errorMessage = ''
+
+    if (this.props.required && (!selectValue.trim() || selectValue === this.props.label)) {
+      errorMessage = 'This field is required.'
+      this._internals.setValidity({ valueMissing: true }, errorMessage, this.customSelect)
+    }
+
+    if (!errorMessage) {
+      this._internals.setValidity({})
+    }
+
+    return errorMessage
+  }
+
+  checkValidity() {
+    this._validateSelect()
+    return this._internals.checkValidity()
   }
 
   connectedCallback() {
@@ -58,6 +101,7 @@ export default class CustomSelect extends HTMLElement {
     this.props.label = this.getAttribute('data-label') ?? 'Input your data'
     this.props.maxWidth = this.getAttribute('data-max-width') ?? '285px'
     this.props.value = this.getAttribute('data-value') ?? ''
+    this.props.required = this.hasAttribute('data-required')
 
     this._internals.setFormValue(this.props.value)
     this.render()
@@ -81,11 +125,16 @@ export default class CustomSelect extends HTMLElement {
         style="--custom-select-width: ${this.props.maxWidth};"
         name="${this.props.name}"
         placeholder="${this.props.label}"
+        value="${this.props.value}"
+        ${this.props.required ? 'required' : ''}
       >
         <option value="" disabled selected>${this.props.label}</option>
-      </select
+      </select>
+      <span class="error-message"></span>
     `
     this.customSelect = this.shadowRoot.querySelector('.custom-select')
+    this.errorMessage = this.shadowRoot.querySelector('.error-message')
+
     this._renderOptions()
 
     this.customSelect.addEventListener('change', this._handleSelectChange)
@@ -94,6 +143,11 @@ export default class CustomSelect extends HTMLElement {
 
 const css = `
   :host {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
     &, .custom-select {
       display: flex;
       flex-grow: 1;
@@ -112,6 +166,14 @@ const css = `
       border: var(--input-border);
       font-size: 16px;
       transition: all 0.3s ease;
+      margin-bottom: 20px;
+      appearance: none;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>') no-repeat right 10px center;
+
+      &.error {
+        margin-bottom: 0;
+        border: var(--input-border-error);
+      }
 
       &:focus-visible {
         outline: var(--input-border-radius) auto 1px;
@@ -120,6 +182,19 @@ const css = `
       &::placeholder {
         color: var(--input-text-color);
       }
+    }
+
+    & .error-message {
+      display: none;
+      color: red;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--error-color);
+      margin-top: 2px;
+      text-align: left;
+      padding-left: 14px;
+      width: 100%;
+      box-sizing: border-box;
     }
   }
 `

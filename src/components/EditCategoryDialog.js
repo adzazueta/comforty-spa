@@ -20,10 +20,15 @@ export default class EditCategoryDialog extends HTMLElement {
 
     this.dialog = null
     this.form = null
+    this.imageUploader = null
+    this.customInputs = []
+    this.closeButton = null
+    this.submitButton = null
 
     this._handleEditCategory = this._handleEditCategory.bind(this)
     this._handleCloseButtonClick = this._handleCloseButtonClick.bind(this)
     this._handleSubmitFromInputs = this._handleSubmitFromInputs.bind(this)
+    this._checkFormValidity = this._checkFormValidity.bind(this)
   }
 
   _handleEditCategory(event) {
@@ -65,6 +70,12 @@ export default class EditCategoryDialog extends HTMLElement {
     this.form.requestSubmit()
   }
 
+  _checkFormValidity() {
+    const isFormValid = Array.from(this.customInputs).every((input) => input.checkValidity())
+    if (isFormValid) this.submitButton.removeAttribute('data-disabled')
+    else this.submitButton.setAttribute('data-disabled', '')
+  }
+
   connectedCallback() {
     this.props.categoryToEdit = JSON.parse(this.getAttribute('data-category-to-edit'))
 
@@ -84,8 +95,8 @@ export default class EditCategoryDialog extends HTMLElement {
         <div class="close-button-container">
           <close-icon></close-icon>
         </div>
+        <p class="title">Edit Category</p>
         <form>
-          <p class="title">Edit Category</p>
           <upload-image
             name="image"
             data-src="${categoryToEdit.image}"
@@ -97,6 +108,7 @@ export default class EditCategoryDialog extends HTMLElement {
             data-label="Name"
             data-max-width="100%"
             data-value="${categoryToEdit.name}"
+            data-required
           ></custom-input>
           <custom-input
             style="--custom-input-width: 100%;"
@@ -105,6 +117,7 @@ export default class EditCategoryDialog extends HTMLElement {
             data-label="Description"
             data-max-width="100%"
             data-value="${categoryToEdit.description}"
+            data-required
           ></custom-input>
           <button-cta data-type="submit">
             Edit Category
@@ -115,16 +128,19 @@ export default class EditCategoryDialog extends HTMLElement {
 
     this.dialog = this.shadowRoot.querySelector('dialog')
     this.form = this.shadowRoot.querySelector('form')
-    const closeButton = this.shadowRoot.querySelector('close-icon')
-    const customInputs = this.shadowRoot.querySelectorAll('custom-input')
-    const submitButton = this.shadowRoot.querySelector('button-cta')
+    this.closeButton = this.shadowRoot.querySelector('close-icon')
+    this.imageUploader = this.shadowRoot.querySelector('upload-image')
+    this.customInputs = this.shadowRoot.querySelectorAll('custom-input')
+    this.submitButton = this.shadowRoot.querySelector('button-cta')
 
     this.form.addEventListener('submit', this._handleEditCategory)
-    closeButton.addEventListener('click', this._handleCloseButtonClick)
-    customInputs.forEach((custonInput) => {
+    this.closeButton.addEventListener('click', this._handleCloseButtonClick)
+    this.imageUploader.addEventListener('custominput', this._checkFormValidity)
+    this.customInputs.forEach((custonInput) => {
+      custonInput.addEventListener('custominput', this._checkFormValidity)
       custonInput.addEventListener('inputenter', this._handleSubmitFromInputs)
     })
-    submitButton.addEventListener('click', this._handleSubmitFromInputs)
+    this.submitButton.addEventListener('click', this._handleSubmitFromInputs)
   }
 }
 
@@ -135,7 +151,7 @@ const css = `
     border-radius: var(--card-border-radius);
     box-shadow: var(--card-box-shadow);
     border: none;
-    pediting: 24px 48px;
+    padding: 24px 48px;
     box-sizing: border-box;
     scale: 0;
 
@@ -165,14 +181,17 @@ const css = `
 
     & form {
       display: flex;
-      flex-direction: column;
-      gap: 16px;
+      flex-direction: row;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 4px;
     }
 
     & .title {
       text-align: center;
       font-size: 26px;
       margin: 0;
+      margin-bottom: 16px;
     }
   }
 `
