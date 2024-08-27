@@ -89,7 +89,6 @@ export default class Categories {
 
       await update(databaseRef(db, `categories/${uuid}`), dataToUpdate)
     } catch (error) {
-      console.log(error)
       throw new Error(error)
     }
   }
