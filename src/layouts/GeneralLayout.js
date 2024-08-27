@@ -188,6 +188,10 @@ const css = `
           flex-grow: 1;
           padding: 32px 0;
           gap: 24px;
+
+          &:has(> newsletter-form) {
+            gap: 4px;
+          }
           
           & p {
             color: var(--text-color-dark);

@@ -14,8 +14,13 @@ export default class LoginForm extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
 
+    this.form = null
+    this.customInputs = []
+    this.submitButton = null
+
     this._handleLoginSubmit = this._handleLoginSubmit.bind(this)
     this._handleSubmitFromInputs = this._handleSubmitFromInputs.bind(this)
+    this._checkFormValidity = this._checkFormValidity.bind(this)
   }
 
   async _handleLoginSubmit(event) {
@@ -33,6 +38,12 @@ export default class LoginForm extends HTMLElement {
     this.shadowRoot.querySelector('#login-form').requestSubmit()
   }
 
+  _checkFormValidity() {
+    const isFormValid = Array.from(this.customInputs).every((input) => input.checkValidity())
+    if (isFormValid) this.submitButton.removeAttribute('data-disabled')
+    else this.submitButton.setAttribute('data-disabled', '')
+  }
+
   connectedCallback() {
     this.render()
   }
@@ -43,8 +54,22 @@ export default class LoginForm extends HTMLElement {
       <div class="card">
         <h1 class="title">Login</h1>
         <form id="login-form">
-          <custom-input style="--custom-input-width: 100%;" name="email" data-type="email" data-label="Email" data-max-width="100%"></custom-input>
-          <custom-input style="--custom-input-width: 100%;" name="password" data-type="password" data-label="Password" data-max-width="100%"></custom-input>
+          <custom-input
+            style="--custom-input-width: 100%;"
+            name="email"
+            data-type="email"
+            data-label="Email"
+            data-max-width="100%"
+            data-required
+          ></custom-input>
+          <custom-input
+            style="--custom-input-width: 100%;"
+            name="password"
+            data-type="password"
+            data-label="Password"
+            data-max-width="100%"
+            data-required
+          ></custom-input>
           <button-cta data-type="submit" data-show-arrow>
             Login
           </button-cta>
@@ -53,15 +78,18 @@ export default class LoginForm extends HTMLElement {
       </div>
     `
 
-    const newsletterForm = this.shadowRoot.querySelector('#login-form')
-    const emailInput = this.shadowRoot.querySelector('[name="email"]')
-    const passwordInput = this.shadowRoot.querySelector('[name="password"]')
-    const submitButtom = this.shadowRoot.querySelector('button-cta')
+    this.form = this.shadowRoot.querySelector('#login-form')
+    this.customInputs = this.shadowRoot.querySelectorAll('custom-input')
+    this.submitButton = this.shadowRoot.querySelector('button-cta')
 
-    newsletterForm.addEventListener('submit', this._handleLoginSubmit)
-    emailInput.addEventListener('inputenter', this._handleSubmitFromInputs)
-    passwordInput.addEventListener('inputenter', this._handleSubmitFromInputs)
-    submitButtom.addEventListener('click', this._handleSubmitFromInputs)
+    this.form.addEventListener('submit', this._handleLoginSubmit)
+    this.customInputs.forEach((customInput) => {
+      customInput.addEventListener('custominput', this._checkFormValidity)
+      customInput.addEventListener('inputenter', this._handleSubmitFromInputs)
+    })
+    this.submitButton.addEventListener('click', this._handleSubmitFromInputs)
+
+    this._checkFormValidity()
   }
 }
 
@@ -92,7 +120,7 @@ const css = `
     & #login-form {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 4px;
       width: 100%;
     }
   }

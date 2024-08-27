@@ -7,8 +7,13 @@ export default class NewsletterForm extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
 
+    this.newsletterForm = null
+    this.emailInput = null
+    this.submitButton = null
+
     this._handleNewsletterSubmit = this._handleNewsletterSubmit.bind(this)
     this._handleSubmitFromInputs = this._handleSubmitFromInputs.bind(this)
+    this._checkFormValidity = this._checkFormValidity.bind(this)
   }
 
   _handleNewsletterSubmit(event) {
@@ -20,6 +25,12 @@ export default class NewsletterForm extends HTMLElement {
 
   _handleSubmitFromInputs() {
     this.shadowRoot.querySelector('#newsletter-form').requestSubmit()
+  }
+
+  _checkFormValidity() {
+    const isFormValid = this.emailInput.checkValidity()
+    if (isFormValid) this.submitButton.removeAttribute('data-disabled')
+    else this.submitButton.setAttribute('data-disabled', '')
   }
 
   connectedCallback() {
@@ -38,13 +49,16 @@ export default class NewsletterForm extends HTMLElement {
       </form>
     `
 
-    const newsletterForm = this.shadowRoot.querySelector('#newsletter-form')
-    const emailInput = this.shadowRoot.querySelector('[name="newsletter-email"]')
-    const submitButtom = this.shadowRoot.querySelector('button-cta')
+    this.newsletterForm = this.shadowRoot.querySelector('#newsletter-form')
+    this.emailInput = this.shadowRoot.querySelector('[name="newsletter-email"]')
+    this.submitButton = this.shadowRoot.querySelector('button-cta')
 
-    newsletterForm.addEventListener('submit', this._handleNewsletterSubmit)
-    emailInput.addEventListener('inputenter', this._handleSubmitFromInputs)
-    submitButtom.addEventListener('click', this._handleSubmitFromInputs)
+    this.newsletterForm.addEventListener('submit', this._handleNewsletterSubmit)
+    this.emailInput.addEventListener('custominput', this._checkFormValidity)
+    this.emailInput.addEventListener('inputenter', this._handleSubmitFromInputs)
+    this.submitButton.addEventListener('click', this._handleSubmitFromInputs)
+
+    this._checkFormValidity()
   }
 }
 
@@ -64,6 +78,10 @@ const css = `
       display: flex;
       align-items: center;
       gap: 8px;
+
+      & button-cta {
+        margin-bottom: 20px;
+      }
     }
   }
 `
