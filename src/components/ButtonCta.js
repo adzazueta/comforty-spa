@@ -1,6 +1,7 @@
 import './icons/RightArrowIcon.js'
 
 export default class ButtonCta extends HTMLElement {
+  static observedAttributes = ['data-disabled']
   static formAssociated = true
 
   constructor() {
@@ -13,7 +14,9 @@ export default class ButtonCta extends HTMLElement {
       showArrow: false
     }
 
+    this.button = null
     this.arrowIcon = null
+
     this._handleClick = this._handleClick.bind(this)
   }
 
@@ -29,6 +32,14 @@ export default class ButtonCta extends HTMLElement {
     this.render()
   }
 
+  attributeChangedCallback(attributeName, oldValue, newValue) {
+    if (oldValue === newValue) return
+
+    if (attributeName === 'data-disabled') {
+      this.button.disabled = this.hasAttribute('data-disabled')
+    }
+  }
+
   render() {
     this.shadowRoot.innerHTML = `
       <style>${css}</style>
@@ -37,17 +48,17 @@ export default class ButtonCta extends HTMLElement {
       </button>
     `
 
-    const button = this.shadowRoot.querySelector('button')
+    this.button = this.shadowRoot.querySelector('button')
 
     if (this.props.showArrow) {
       const icon = document.createElement('right-arrow-icon')
       this.arrowIcon = document.createElement('span')
       this.arrowIcon.classList.add('arrow-icon')
       this.arrowIcon.appendChild(icon)
-      button.appendChild(this.arrowIcon)
+      this.button.appendChild(this.arrowIcon)
     }
 
-    button.addEventListener('click', this._handleClick)
+    this.button.addEventListener('click', this._handleClick)
   }
 }
 
@@ -68,7 +79,12 @@ const css = `
     width: 100%;
     transition: all 0.3s ease;
 
-    &:hover {
+    &[disabled] {
+      cursor: default;
+      opacity: 0.3;
+    }
+
+    &:hover:enabled {
       background-color: var(--bg-color);
       color: var(--text-color-dark);
       border: var(--input-border);

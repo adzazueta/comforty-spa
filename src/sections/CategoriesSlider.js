@@ -11,10 +11,7 @@ export default class CategoriesSlider extends HTMLElement {
     this.attachShadow({ mode: 'open' })
 
     this.state = {
-      currentIndex: 1
-    }
-
-    this.state = {
+      currentIndex: 0,
       categories: []
     }
 
@@ -64,9 +61,7 @@ export default class CategoriesSlider extends HTMLElement {
       : this.sliderItems.length - 1
     
     const offset = -this.state.currentIndex * 28
-    this.sliderInner.style.transform = offset 
-      ? `translateX(calc(${offset}% - ${32 * this.state.currentIndex + 1}px))`
-      : `translateX(${offset}%)`
+    this.sliderInner.style.transform = `translateX(calc(${offset}% - ${32 * this.state.currentIndex + 1}px))`
   }
 
   _handleRightButtonClick() {
@@ -75,9 +70,7 @@ export default class CategoriesSlider extends HTMLElement {
       : 0
     
     const offset = -this.state.currentIndex * 28
-    this.sliderInner.style.transform = offset 
-      ? `translateX(calc(${offset}% - ${32 * this.state.currentIndex + 1}px))`
-      : `translateX(${offset}%)`
+    this.sliderInner.style.transform = `translateX(calc(${offset}% - ${32 * this.state.currentIndex + 1}px))`
   }
 
   async connectedCallback() {

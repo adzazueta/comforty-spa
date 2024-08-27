@@ -8,19 +8,25 @@
   --text-color-light: #ffffff;
   --text-color-dark: #272343;
   --input-text-color: #9a9caa;
+  --info-color: #2196f3;
+  --success-color: #4caf50;
+  --warning-color: #ff9800;
+  --error-color: #f44336;
 
   --border-color: #e1e3e5;
+  --border-radius: 8px;
 
   --content-wrapper-width: 1320px;
   --icon-button-size: 44px;
-  --button-border-radius: 8px;
+  --button-border-radius: var(--border-radius);
   --button-border: 1px solid transparent;
   
-  --input-border-radius: 8px;
-  --input-border: 1px solid #e1e3e5;
+  --input-border-radius: var(--border-radius);
+  --input-border: 1px solid var(--border-color);
+  --input-border-error: 1px solid var(--error-color);
 
   --card-border-radius: 12px;
   --card-box-shadow: 0 0 30px rgb(39 35 67 / 12%);
 
-  --img-border-radius: 8px;
+  --img-border-radius: var(--border-radius);
 }

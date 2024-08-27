@@ -17,22 +17,25 @@ export default class RemoveCategoryDialog extends HTMLElement {
 
     this.dialog = null
     this.form = null
+    this.closeButton = null
+    this.submitButton = null
 
     this._handleRemoveCategory = this._handleRemoveCategory.bind(this)
     this._handleCloseButtonClick = this._handleCloseButtonClick.bind(this)
     this._handleSubmitFromInputs = this._handleSubmitFromInputs.bind(this)
   }
 
-  _handleRemoveCategory(event) {
+  async _handleRemoveCategory(event) {
     event.preventDefault()
+    let error = false
     try {
-      Categories.removeCategory(this.props.categoryToRemove.uuid)
-    } catch (error) {
-      throw new Error(error)
+      await Categories.removeCategory(this.props.categoryToRemove.uuid)
+    } catch {
+      error = true
     } finally {
       this.dialog.close()
       this.dispatchEvent(new CustomEvent('removedcategory', {
-        detail: { action: 'remove' }
+        detail: { action: 'remove', error }
       }))
     }
   }
@@ -76,12 +79,12 @@ export default class RemoveCategoryDialog extends HTMLElement {
 
     this.dialog = this.shadowRoot.querySelector('dialog')
     this.form = this.shadowRoot.querySelector('form')
-    const closeButton = this.shadowRoot.querySelector('close-icon')
-    const submitButton = this.shadowRoot.querySelector('button-cta')
+    this.closeButton = this.shadowRoot.querySelector('close-icon')
+    this.submitButton = this.shadowRoot.querySelector('button-cta')
 
     this.form.addEventListener('submit', this._handleRemoveCategory)
-    closeButton.addEventListener('click', this._handleCloseButtonClick)
-    submitButton.addEventListener('click', this._handleSubmitFromInputs)
+    this.closeButton.addEventListener('click', this._handleCloseButtonClick)
+    this.submitButton.addEventListener('click', this._handleSubmitFromInputs)
   }
 }
 
@@ -92,7 +95,7 @@ const css = `
     border-radius: var(--card-border-radius);
     box-shadow: var(--card-box-shadow);
     border: none;
-    pediting: 24px 48px;
+    padding: 24px 48px;
     box-sizing: border-box;
     scale: 0;
 
@@ -122,18 +125,22 @@ const css = `
 
     & form {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      justify-content: center;
+      flex-wrap: wrap;
       gap: 16px;
     }
 
     & .title {
       text-align: center;
+      flex-basis: 100%;
       font-size: 26px;
       margin: 0;
     }
     
     & .description {
       text-align: center;
+      flex-basis: 100%;
       font-size: 16px;
       margin: 16px 0;
     }

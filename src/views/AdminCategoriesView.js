@@ -1,10 +1,12 @@
 // Services
 import Categories from '../services/Categories.js'
+import Products from '../services/Products.js'
 
 // Layout
 import '../layouts/AdminLayout.js'
 
 // Components
+import '../components/ToastAlert.js'
 import '../components/ItemsTable.js'
 import '../components/AddCategoryDialog.js'
 import '../components/EditCategoryDialog.js'
@@ -20,6 +22,7 @@ export default class AdminCategoriesView extends HTMLElement {
       headers: ['Code', 'Name', 'Description']
     }
 
+    this.toastAlert = null
     this.adminLayout = null
     this.addDialog = null
     this.editDialog = null
@@ -50,14 +53,20 @@ export default class AdminCategoriesView extends HTMLElement {
     this.editDialog.showModal()
   }
 
-  _handleRemoveCategory(event) {
+  async _handleRemoveCategory(event) {
     const categoryToRemove = this.state.categories.find((category) => category.uuid === event.detail.uuid)
-    this.removeDialog = document.createElement('remove-category-dialog')
-    this.removeDialog.setAttribute('data-category-to-remove', JSON.stringify(categoryToRemove))
-    this.removeDialog.addEventListener('removedcategory', this._handleAfterActionCategory)
-    this.removeDialog.addEventListener('closedialog', this._handleCloseDialog)
-    this.adminLayout.appendChild(this.removeDialog)
-    this.removeDialog.showModal()
+    const productsOfCategory = await Products.getProductsByCategory(categoryToRemove.code)
+
+    if (productsOfCategory.length > 0) {
+      this.toastAlert.showAlert('You cannot remove this category because it contains active products. If you want to remove it first remove the products.', 'error', 5000)
+    } else {
+      this.removeDialog = document.createElement('remove-category-dialog')
+      this.removeDialog.setAttribute('data-category-to-remove', JSON.stringify(categoryToRemove))
+      this.removeDialog.addEventListener('removedcategory', this._handleAfterActionCategory)
+      this.removeDialog.addEventListener('closedialog', this._handleCloseDialog)
+      this.adminLayout.appendChild(this.removeDialog)
+      this.removeDialog.showModal()
+    }
   }
 
   async _handleAfterActionCategory(event) {
@@ -65,12 +74,19 @@ export default class AdminCategoriesView extends HTMLElement {
     try {
       this.state.categories = await Categories.getAllCategories()
     } catch (error) {
-      console.error(error)
+      throw error
     } finally {
       if (event.detail.action === 'add') this.adminLayout.removeChild(this.addDialog)
       if (event.detail.action === 'edit') this.adminLayout.removeChild(this.editDialog)
       if (event.detail.action === 'remove') this.adminLayout.removeChild(this.removeDialog)
+
       this.render()
+
+      if (event.detail.error) {
+        if (event.detail.action === 'add') this.toastAlert.showAlert('There was an error creating the category. Please try again later', 'error')
+        if (event.detail.action === 'edit') this.toastAlert.showAlert('There was an error updating the category. Please try again later', 'error')
+        if (event.detail.action === 'remove') this.toastAlert.showAlert('There was an error removing the category. Please try again later', 'error')
+      }
     }
   }
 
@@ -90,6 +106,7 @@ export default class AdminCategoriesView extends HTMLElement {
 
     this.shadowRoot.innerHTML = `
       <style>${css}</style>
+      <toast-alert></toast-alert>
       <admin-layout>
         <div class="wrapper">
           <h1 class="title">Categories</h1>
@@ -98,6 +115,7 @@ export default class AdminCategoriesView extends HTMLElement {
       </admin-layout>
     `
 
+    this.toastAlert = this.shadowRoot.querySelector('toast-alert')
     this.adminLayout = this.shadowRoot.querySelector('admin-layout')
     const itemsTable = this.shadowRoot.querySelector('items-table')
 
