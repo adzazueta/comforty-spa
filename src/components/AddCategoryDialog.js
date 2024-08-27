@@ -27,12 +27,13 @@ export default class AddCategoryDialog extends HTMLElement {
     this._checkFormValidity = this._checkFormValidity.bind(this)
   }
 
-  _handleAddCategory(event) {
+  async _handleAddCategory(event) {
     event.preventDefault()
+    let error = false
     try {
       const formData = new FormData(event.target)
       
-      Categories.createCategory(
+      await Categories.createCategory(
         formData.get('name'),
         formData.get('description'),
         {
@@ -40,12 +41,12 @@ export default class AddCategoryDialog extends HTMLElement {
           extension: formData.get('image').name.split('.').reverse()[0]
         }
       )
-    } catch (error) {
-      throw new Error(error)
+    } catch {
+      error = true
     } finally {
       this.dialog.close()
       this.dispatchEvent(new CustomEvent('addedcategory', {
-        detail: { action: 'add' }
+        detail: { action: 'add', error }
       }))
     }
   }

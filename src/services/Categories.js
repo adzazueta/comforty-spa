@@ -25,8 +25,8 @@ export default class Categories {
 
       const uploadedImage = await uploadBytes(imageRef, image.file)
       const imageURL = await getDownloadURL(uploadedImage.ref)
-
-      set(databaseRef(db, `categories/${uuid}`), {
+      
+      await set(databaseRef(db, `categories/${uuid}`), {
         uuid,
         code: name.toLowerCase().replace(' ', '-'),
         name,
@@ -87,17 +87,18 @@ export default class Categories {
         dataToUpdate.image = imageURL
       }
 
-      update(databaseRef(db, `categories/${uuid}`), dataToUpdate)
+      await update(databaseRef(db, `categories/${uuid}`), dataToUpdate)
     } catch (error) {
+      console.log(error)
       throw new Error(error)
     }
   }
 
-  static removeCategory(uuid) {
+  static async removeCategory(uuid) {
     const db = getDatabase()
 
     try {
-      remove(databaseRef(db, `categories/${uuid}`))
+      await remove(databaseRef(db, `categories/${uuid}`))
     } catch (error) {
       throw new Error(error)
     }

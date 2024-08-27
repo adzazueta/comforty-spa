@@ -35,12 +35,13 @@ export default class AddProductDialog extends HTMLElement {
     this._checkFormValidity = this._checkFormValidity.bind(this)
   }
 
-  _handleAddProduct(event) {
+  async _handleAddProduct(event) {
     event.preventDefault()
+    let error = false
     try {
       const formData = new FormData(event.target)
 
-      Products.createProduct(
+      await Products.createProduct(
         formData.get('name'),
         formData.get('description'),
         Number(formData.get('price')),
@@ -51,12 +52,12 @@ export default class AddProductDialog extends HTMLElement {
           extension: formData.get('image').name.split('.').reverse()[0]
         }
       )
-    } catch (error) {
-      throw new Error(error)
+    } catch {
+      error = true
     } finally {
       this.dialog.close()
       this.dispatchEvent(new CustomEvent('addedproduct', {
-        detail: { action: 'add' }
+        detail: { action: 'add', error }
       }))
     }
   }

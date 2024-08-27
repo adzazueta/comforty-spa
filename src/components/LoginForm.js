@@ -5,8 +5,9 @@ import { navigateTo } from '../router/index.js'
 import User from "../services/User.js"
 
 // Components
-import '../components/ButtonCta.js'
-import '../components/CustomInput.js'
+import './ToastAlert.js'
+import './ButtonCta.js'
+import './CustomInput.js'
 
 export default class LoginForm extends HTMLElement {
   static css = ``
@@ -17,6 +18,7 @@ export default class LoginForm extends HTMLElement {
     this.form = null
     this.customInputs = []
     this.submitButton = null
+    this.toastAlert = null
 
     this._handleLoginSubmit = this._handleLoginSubmit.bind(this)
     this._handleSubmitFromInputs = this._handleSubmitFromInputs.bind(this)
@@ -30,7 +32,7 @@ export default class LoginForm extends HTMLElement {
       await User.signIn(formData.get('email'), formData.get('password'))
       navigateTo('/admin/products')
     } catch (error) {
-      console.error(error)
+      this.toastAlert.showAlert('Login failed. Please check your credentials.', 'error')
     }
   }
 
@@ -51,6 +53,7 @@ export default class LoginForm extends HTMLElement {
   render() {
     this.shadowRoot.innerHTML = `
       <style>${css}</style>
+      <toast-alert></toast-alert>
       <div class="card">
         <h1 class="title">Login</h1>
         <form id="login-form">
@@ -81,6 +84,7 @@ export default class LoginForm extends HTMLElement {
     this.form = this.shadowRoot.querySelector('#login-form')
     this.customInputs = this.shadowRoot.querySelectorAll('custom-input')
     this.submitButton = this.shadowRoot.querySelector('button-cta')
+    this.toastAlert = this.shadowRoot.querySelector('toast-alert')
 
     this.form.addEventListener('submit', this._handleLoginSubmit)
     this.customInputs.forEach((customInput) => {

@@ -5,6 +5,8 @@ import Products from '../services/Products.js'
 import '../layouts/AdminLayout.js'
 
 // Components
+
+import '../components/ToastAlert.js'
 import '../components/ItemsTable.js'
 import '../components/AddProductDialog.js'
 import '../components/EditProductDialog.js'
@@ -20,6 +22,7 @@ export default class AdminProductsView extends HTMLElement {
       headers: ['Name', 'Description', 'Price', 'Inventory', 'Sales', 'Rating', 'Category']
     }
 
+    this.toastAlert = null
     this.adminLayout = null
     this.addDialog = null
     this.editDialog = null
@@ -65,12 +68,19 @@ export default class AdminProductsView extends HTMLElement {
     try {
       this.state.products = await Products.getAllProducts()
     } catch (error) {
-      console.error(error)
+      throw error
     } finally {
       if (event.detail.action === 'add') this.adminLayout.removeChild(this.addDialog)
       if (event.detail.action === 'edit') this.adminLayout.removeChild(this.editDialog)
       if (event.detail.action === 'remove') this.adminLayout.removeChild(this.removeDialog)
+      
       this.render()
+      
+      if (event.detail.error) {
+        if (event.detail.action === 'add') this.toastAlert.showAlert('There was an error creating the product. Please try again later', 'error')
+        if (event.detail.action === 'edit') this.toastAlert.showAlert('There was an error updating the product. Please try again later', 'error')
+        if (event.detail.action === 'remove') this.toastAlert.showAlert('There was an error removing the product. Please try again later', 'error')
+      }
     }
   }
 
@@ -90,6 +100,7 @@ export default class AdminProductsView extends HTMLElement {
 
     this.shadowRoot.innerHTML = `
       <style>${css}</style>
+      <toast-alert></toast-alert>
       <admin-layout>
         <div class="wrapper">
           <h1 class="title">Products</h1>
@@ -98,6 +109,7 @@ export default class AdminProductsView extends HTMLElement {
       </admin-layout>
     `
 
+    this.toastAlert = this.shadowRoot.querySelector('toast-alert')
     this.adminLayout = this.shadowRoot.querySelector('admin-layout')
     const itemsTable = this.shadowRoot.querySelector('items-table')
 

@@ -31,8 +31,9 @@ export default class EditCategoryDialog extends HTMLElement {
     this._checkFormValidity = this._checkFormValidity.bind(this)
   }
 
-  _handleEditCategory(event) {
+  async _handleEditCategory(event) {
     event.preventDefault()
+    let error = false
     try {
       const formData = new FormData(event.target)
       let image = formData.get('image')
@@ -43,18 +44,18 @@ export default class EditCategoryDialog extends HTMLElement {
         }
       }
 
-      Categories.updateCategory(
+      await Categories.updateCategory(
         this.props.categoryToEdit.uuid,
         formData.get('name'),
         formData.get('description'),
         image
       )
-    } catch (error) {
-      throw new Error(error)
+    } catch {
+      error = true
     } finally {
       this.dialog.close()
       this.dispatchEvent(new CustomEvent('editedcategory', {
-        detail: { action: 'edit' }
+        detail: { action: 'edit', error }
       }))
     }
   }

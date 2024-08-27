@@ -39,8 +39,9 @@ export default class EditProductDialog extends HTMLElement {
     this._checkFormValidity = this._checkFormValidity.bind(this)
   }
 
-  _handleEditProduct(event) {
+  async _handleEditProduct(event) {
     event.preventDefault()
+    let error = false
     try {
       const formData = new FormData(event.target)
 
@@ -52,7 +53,7 @@ export default class EditProductDialog extends HTMLElement {
         }
       }
 
-      Products.updateProduct(
+      await Products.updateProduct(
         this.props.productToEdit.uuid,
         formData.get('name'),
         formData.get('description'),
@@ -61,12 +62,12 @@ export default class EditProductDialog extends HTMLElement {
         formData.get('category'),
         image
       )
-    } catch (error) {
-      throw new Error(error)
+    } catch {
+      error = true
     } finally {
       this.dialog.close()
       this.dispatchEvent(new CustomEvent('editedproduct', {
-        detail: { action: 'edit' }
+        detail: { action: 'edit', error }
       }))
     }
   }

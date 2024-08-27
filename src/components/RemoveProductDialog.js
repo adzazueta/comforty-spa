@@ -25,16 +25,17 @@ export default class RemoveProductDialog extends HTMLElement {
     this._handleSubmitFromInputs = this._handleSubmitFromInputs.bind(this)
   }
 
-  _handleRemoveProduct(event) {
+  async _handleRemoveProduct(event) {
     event.preventDefault()
+    let error = false
     try {
-      Products.removeProduct(this.props.productToRemove.uuid)
-    } catch (error) {
-      throw new Error(error)
+      await Products.removeProduct(this.props.productToRemove.uuid)
+    } catch {
+      error = true
     } finally {
       this.dialog.close()
       this.dispatchEvent(new CustomEvent('removedproduct', {
-        detail: { action: 'remove' }
+        detail: { action: 'remove', error }
       }))
     }
   }
